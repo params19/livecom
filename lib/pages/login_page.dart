@@ -1,3 +1,4 @@
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:livecom/constants/color.dart';
 
@@ -14,6 +15,8 @@ class _PhoneLoginState extends State<LoginPage> {
 
   TextEditingController _phoneController = TextEditingController();
   TextEditingController _otpController = TextEditingController();
+
+  String countryCode = "+91";
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +49,24 @@ class _PhoneLoginState extends State<LoginPage> {
                     child: TextFormField(
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
+                      validator: (value) {
+                        if (value!.length != 10) {
+                          return "Please enter a valid phone number";
+                        }
+                        return null;
+                      },
                       decoration: InputDecoration(
+                          prefixIcon: CountryCodePicker(
+                            onChanged: (value) {
+                              print(value.dialCode);
+                              countryCode = value.dialCode!;
+                            },
+                            initialSelection: 'IN',
+                            favorite: ['+91', 'IN'],
+                            showCountryOnly: false,
+                            showOnlyCountryWhenClosed: false,
+                            alignLeft: false,
+                          ),
                           hintText: "Phone number",
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -59,7 +79,11 @@ class _PhoneLoginState extends State<LoginPage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       child: const Text('Send OTP'),
-                      onPressed: () {},
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          print("Validated");
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
                         backgroundColor: primary_blue,
