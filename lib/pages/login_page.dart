@@ -81,7 +81,46 @@ class _PhoneLoginState extends State<LoginPage> {
                       child: const Text('Send OTP'),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          print("Validated");
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text("OTP Verification"),
+                              content: Form(
+                                key: _otpKey,
+                                child: TextFormField(
+                                  controller: _otpController,
+                                  keyboardType: TextInputType.number,
+                                  validator: (value) {
+                                    if (value!.length != 6) {
+                                      return "Please enter a valid OTP";
+                                    }
+                                    return null;
+                                  },
+                                  decoration: InputDecoration(
+                                      hintText: "OTP",
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide:
+                                              BorderSide(color: primary_blue))),
+                                ),
+                              ),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    if (_otpKey.currentState!.validate()) {
+                                      Navigator.pop(context);
+                                    }
+                                  },
+                                  child: const Text("Verify"),
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    backgroundColor: primary_blue,
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
                         }
                       },
                       style: ElevatedButton.styleFrom(
