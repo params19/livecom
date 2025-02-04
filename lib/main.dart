@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routes: {
-        '/': (context) => const HomePage(),
+        '/': (context) => const ChatPage(),
         "/splash": (context) => const SplashScreen(),
         "/home": (context) => const HomePage(),
         "/login": (context) => LoginPage(),
