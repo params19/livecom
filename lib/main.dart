@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:livecom/pages/home_page.dart';
 import 'package:livecom/pages/login_page.dart';
+import 'package:livecom/pages/splashscreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,7 +36,9 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routes: {
-        '/': (context) => const LoginPage(),
+        '/': (context) => const SplashScreen(),
+        "/home": (context) => const HomePage(),
+        "/login": (context) => LoginPage(),
       },
     );
   }

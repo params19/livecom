@@ -18,20 +18,34 @@ class _PhoneLoginState extends State<LoginPage> {
 
   String countryCode = "+91";
 
-  @override
+// void handleOtpSubmit(String userId, BuildContext context) {
+//     if (_otpKey.currentState!.validate()) {
+//       loginWithOtp(otp: _otpController.text, userId: userId).then((value) {
+//         if (value) {
+//           // setting and saving data locally
+//           Provider.of<UserDataProvider>(context, listen: false)
+//               .setUserId(userId);
+//           Provider.of<UserDataProvider>(context, listen: false)
+//               .setUserPhone(countryCode + _phoneController.text);
+
+//           Navigator.pushNamedAndRemoveUntil(
+//               context, "/update", (route) => false,
+//               arguments: {"title": "add"});
+//         } else {
+//           ScaffoldMessenger.of(context)
+//               .showSnackBar(SnackBar(content: Text("Login Failed")));
+//         }
+//       });
+//     }
+//   }
+//   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(254, 254, 255, 255),
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         width: double.infinity,
-        child: Column(
-          children: [
-            Expanded(
-              child: Image.asset(
-                "assets/splashscreen_ui.png",
-              ),
-            ),
+        child:
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -67,7 +81,7 @@ class _PhoneLoginState extends State<LoginPage> {
                             showOnlyCountryWhenClosed: false,
                             alignLeft: false,
                           ),
-                          hintText: "Phone number",
+                          labelText: "Phone number",
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide(color: primary_blue))),
@@ -82,59 +96,21 @@ class _PhoneLoginState extends State<LoginPage> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text("OTP Verification"),
-                              content: Form(
-                                key: _otpKey,
-                                child: TextFormField(
-                                  controller: _otpController,
-                                  keyboardType: TextInputType.number,
-                                  validator: (value) {
-                                    if (value!.length != 6) {
-                                      return "Please enter a valid OTP";
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                      hintText: "OTP",
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          borderSide:
-                                              BorderSide(color: primary_blue))),
-                                ),
-                              ),
-                              actions: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (_otpKey.currentState!.validate()) {
-                                      Navigator.pop(context);
-                                    }
-                                  },
-                                  child: const Text("Verify"),
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    backgroundColor: primary_blue,
-                                  ),
-                                )
-                              ],
-                            ),
-                          );
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                    title: Text("OTP Verification"),
+                                  ));
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: primary_blue,
-                      ),
+                          backgroundColor: primary_blue,
+                          foregroundColor: Colors.white),
                     ),
-                  ),
+                  )
                 ],
               ),
             )
-          ],
         ),
-      ),
-    );
+      );
   }
 }
