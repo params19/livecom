@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livecom/constants/color.dart';
 import 'package:livecom/models/message_model.dart';
 
 class ChatMessage extends StatefulWidget {
@@ -19,6 +20,7 @@ class _ChatMessageState extends State<ChatMessage> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.all(5),
       child: Row(
         mainAxisAlignment: widget.message.sender == widget.currentUserId
             ? MainAxisAlignment.end
@@ -32,7 +34,32 @@ class _ChatMessageState extends State<ChatMessage> {
               Row(
                 children: [
                   Container(
-                    child: Text(widget.message.message),
+                    padding: EdgeInsets.all(10),
+                    constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.75),
+                    decoration: BoxDecoration(
+                        color: widget.message.sender == widget.currentUserId
+                            ? primary_blue
+                            : secondary_color,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft:
+                              widget.message.sender == widget.currentUserId
+                                  ? Radius.circular(20)
+                                  : Radius.circular(2),
+                          bottomRight:
+                              widget.message.sender == widget.currentUserId
+                                  ? Radius.circular(2)
+                                  : Radius.circular(20),
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        )),
+                    child: Text(
+                      widget.message.message,
+                      style: TextStyle(
+                          color: widget.message.sender == widget.currentUserId
+                              ? Colors.white
+                              : Colors.black),
+                    ),
                   )
                 ],
               )

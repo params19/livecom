@@ -5,6 +5,15 @@ import 'package:livecom/constants/color.dart';
 import 'package:livecom/models/message_model.dart';
 
 class ChatPage extends StatefulWidget {
+  // final List<MessageModel> messages;
+
+  // // Constructor to receive messages
+  // ChatPage({required this.messages});
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
   List messages = [
     MessageModel(
         message: "Hello",
@@ -27,21 +36,8 @@ class ChatPage extends StatefulWidget {
         timestamp: DateTime(2024, 1, 3),
         isGroupInvite: false,
         isSeenByReceiver: false),
-    MessageModel(
-        message: "how are you?",
-        sender: "101",
-        receiver: "202",
-        timestamp: DateTime(2024, 1, 4),
-        isSeenByReceiver: false,
-        isImage: true,
-        isGroupInvite: false),
   ];
 
-  @override
-  State<ChatPage> createState() => _ChatPageState();
-}
-
-class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,8 +74,12 @@ class _ChatPageState extends State<ChatPage> {
           ],
         ),
       ),
-      
+      body: ListView.builder(
+          itemCount: messages.length,
+          itemBuilder: (context, index) => ChatMessage(
+              message: messages[index],
+              currentUserId: "101",
+              isImage: messages[index].isImage ?? false)),
     );
-    
   }
 }
