@@ -4,6 +4,7 @@ import 'package:livecom/pages/home_page.dart';
 import 'package:livecom/pages/login_page.dart';
 import 'package:livecom/pages/profile_page.dart';
 import 'package:livecom/pages/splashscreen.dart';
+import 'package:livecom/pages/update_profile_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,12 +24,13 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routes: {
-        '/': (context) => ProfilePage(),
+        '/': (context) => UpadteProfilePage(),
         "/splash": (context) => const SplashScreen(),
         "/home": (context) => const HomePage(),
         "/login": (context) => LoginPage(),
         "/chat": (context) => ChatPage(),
         "/profile": (context) => ProfilePage(),
+        "/update_profile": (context) => UpadteProfilePage(),
       },
     );
   }
