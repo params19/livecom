@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:livecom/constants/color.dart';
+import 'package:livecom/constants/date_format.dart';
 import 'package:livecom/models/message_model.dart';
 
 class ChatMessage extends StatefulWidget {
@@ -59,6 +60,20 @@ class _ChatMessageState extends State<ChatMessage> {
                           color: widget.message.sender == widget.currentUserId
                               ? Colors.white
                               : Colors.black),
+                    ),
+                  )
+                ],
+              ),
+              Row(
+                children: [
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 3),
+                    child: Text(
+                      formatDate(widget.message.timestamp),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
                     ),
                   )
                 ],
