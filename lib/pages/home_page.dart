@@ -33,6 +33,9 @@ class _HomePageState extends State<HomePage> {
       body: ListView.builder(
         itemCount: 10,
         itemBuilder: (context, index) => ListTile(
+          onTap: () {
+            Navigator.pushNamed(context, "/chat");
+          },
           leading: Stack(children: [
             CircleAvatar(
               backgroundColor: background_color,
@@ -51,7 +54,29 @@ class _HomePageState extends State<HomePage> {
           ]),
           title: Text("Other User"),
           subtitle: Text("Hey there!"),
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              CircleAvatar(
+                backgroundColor: primary_blue,
+                radius: 10,
+                child: Text(
+                  "10",
+                  style: TextStyle(fontSize: 11, color: Colors.white),
+                ),
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Text("10:00 AM")
+            ],
+          ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(Icons.chat),
       ),
     );
   }
