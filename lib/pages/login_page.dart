@@ -86,8 +86,8 @@ class _PhoneLoginState extends State<LoginPage> {
                         ),
                         labelText: "Phone number",
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: primary_blue))),
+                          borderRadius: BorderRadius.circular(10),
+                        )),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -123,6 +123,12 @@ class _PhoneLoginState extends State<LoginPage> {
                                       Form(
                                           key: _otpKey,
                                           child: TextFormField(
+                                              validator: (value) {
+                                                if (value!.length != 6) {
+                                                  return "Please enter a valid OTP";
+                                                }
+                                                return null;
+                                              },
                                               controller: _otpController,
                                               keyboardType:
                                                   TextInputType.number,
@@ -140,6 +146,16 @@ class _PhoneLoginState extends State<LoginPage> {
                                               ))),
                                     ],
                                   ),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          if (_otpKey.currentState!
+                                              .validate()) {
+                                            // handleOtpSubmit(_phoneController.text, context);
+                                          }
+                                        },
+                                        child: Text("Submit"))
+                                  ],
                                 ));
                       }
                     },
