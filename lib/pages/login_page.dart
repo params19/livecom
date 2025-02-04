@@ -18,27 +18,6 @@ class _PhoneLoginState extends State<LoginPage> {
 
   String countryCode = "+91";
 
-// void handleOtpSubmit(String userId, BuildContext context) {
-//     if (_otpKey.currentState!.validate()) {
-//       loginWithOtp(otp: _otpController.text, userId: userId).then((value) {
-//         if (value) {
-//           // setting and saving data locally
-//           Provider.of<UserDataProvider>(context, listen: false)
-//               .setUserId(userId);
-//           Provider.of<UserDataProvider>(context, listen: false)
-//               .setUserPhone(countryCode + _phoneController.text);
-
-//           Navigator.pushNamedAndRemoveUntil(
-//               context, "/update", (route) => false,
-//               arguments: {"title": "add"});
-//         } else {
-//           ScaffoldMessenger.of(context)
-//               .showSnackBar(SnackBar(content: Text("Login Failed")));
-//         }
-//       });
-//     }
-//   }
-//   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(254, 254, 255, 255),
