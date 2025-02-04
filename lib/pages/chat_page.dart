@@ -3,6 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:livecom/constants/chat_message.dart';
 import 'package:livecom/constants/color.dart';
 import 'package:livecom/models/message_model.dart';
+import 'package:livecom/pages/home_page.dart';
 
 class ChatPage extends StatefulWidget {
   // final List<MessageModel> messages;
@@ -61,6 +62,10 @@ class _ChatPageState extends State<ChatPage> {
           icon: Icon(Icons.arrow_back, color: Colors.black), // Back button
           onPressed: () {
             // Navigates back
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
           },
         ),
         title: const Row(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:livecom/pages/chat_page.dart';
 import 'package:livecom/pages/home_page.dart';
 import 'package:livecom/pages/login_page.dart';
+import 'package:livecom/pages/profile_page.dart';
 import 'package:livecom/pages/splashscreen.dart';
 
 void main() {
@@ -22,11 +23,12 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routes: {
-        '/': (context) => ChatPage(),
+        '/': (context) => ProfilePage(),
         "/splash": (context) => const SplashScreen(),
         "/home": (context) => const HomePage(),
         "/login": (context) => LoginPage(),
-        "/chat" : (context) => ChatPage(),
+        "/chat": (context) => ChatPage(),
+        "/profile": (context) => ProfilePage(),
       },
     );
   }

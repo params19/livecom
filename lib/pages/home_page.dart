@@ -22,11 +22,14 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 29),
         ),
         actions: [
-          CircleAvatar(
-            backgroundColor: background_color,
-            backgroundImage: Image(
-              image: AssetImage("assets/user.png"),
-            ).image,
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(context, "/profile"),
+            child: CircleAvatar(
+              backgroundColor: background_color,
+              backgroundImage: Image(
+                image: AssetImage("assets/user.png"),
+              ).image,
+            ),
           )
         ],
       ),
