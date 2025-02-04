@@ -14,6 +14,7 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  TextEditingController messageController = TextEditingController();
   List messages = [
     MessageModel(
         message: "Hello",
@@ -21,21 +22,31 @@ class _ChatPageState extends State<ChatPage> {
         receiver: "202",
         timestamp: DateTime(2024, 1, 1),
         isSeenByReceiver: true,
-        isGroupInvite: false),
+        isImage: true),
     MessageModel(
-        message: "hi",
-        sender: "202",
-        receiver: "101",
-        timestamp: DateTime(2024, 1, 2),
-        isSeenByReceiver: false,
-        isGroupInvite: false),
+      message: "hi",
+      sender: "202",
+      receiver: "101",
+      timestamp: DateTime(2024, 1, 2),
+      isSeenByReceiver: false,
+      isImage: true,
+    ),
     MessageModel(
-        message: "how are you?",
-        sender: "101",
-        receiver: "202",
-        timestamp: DateTime(2024, 1, 3),
-        isGroupInvite: false,
-        isSeenByReceiver: false),
+      message: "how are you?",
+      sender: "101",
+      receiver: "202",
+      timestamp: DateTime(2024, 1, 3),
+      isSeenByReceiver: false,
+      isImage: true,
+    ),
+    MessageModel(
+      message: "how are you?",
+      sender: "101",
+      receiver: "202",
+      timestamp: DateTime(2024, 1, 3),
+      isSeenByReceiver: false,
+      isImage: true,
+    ),
   ];
 
   @override
@@ -52,7 +63,7 @@ class _ChatPageState extends State<ChatPage> {
             // Navigates back
           },
         ),
-        title: Row(
+        title: const Row(
           children: [
             CircleAvatar(),
             SizedBox(
@@ -74,12 +85,41 @@ class _ChatPageState extends State<ChatPage> {
           ],
         ),
       ),
-      body: ListView.builder(
-          itemCount: messages.length,
-          itemBuilder: (context, index) => ChatMessage(
-              message: messages[index],
-              currentUserId: "101",
-              isImage: messages[index].isImage ?? false)),
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.all(8),
+              child: ListView.builder(
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) => ChatMessage(
+                      message: messages[index],
+                      currentUserId: "101",
+                      isImage: messages[index].isImage ?? false)),
+            ),
+          ),
+          Container(
+              margin: EdgeInsets.all(6),
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                  color: secondary_color,
+                  borderRadius: BorderRadius.circular(20)),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: messageController,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Type a message..."),
+                    ),
+                  ),
+                  IconButton(onPressed: () {}, icon: Icon(Icons.image)),
+                  IconButton(onPressed: () {}, icon: Icon(Icons.send))
+                ],
+              ))
+        ],
+      ),
     );
   }
 }

@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
                 image: AssetImage("assets/user.png"),
               ).image,
             ),
-            Positioned(
+            const Positioned(
               right: 0,
               bottom: 0,
               child: CircleAvatar(
