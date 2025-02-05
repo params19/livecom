@@ -3,6 +3,7 @@ import 'package:livecom/pages/chat_page.dart';
 import 'package:livecom/pages/home_page.dart';
 import 'package:livecom/pages/login_page.dart';
 import 'package:livecom/pages/profile_page.dart';
+import 'package:livecom/pages/search_user_page.dart';
 import 'package:livecom/pages/splashscreen.dart';
 import 'package:livecom/pages/update_profile_page.dart';
 
@@ -24,13 +25,14 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routes: {
-        '/': (context) => UpadteProfilePage(),
+        '/': (context) => SearchUserPage(),
         "/splash": (context) => const SplashScreen(),
         "/home": (context) => const HomePage(),
         "/login": (context) => LoginPage(),
         "/chat": (context) => ChatPage(),
         "/profile": (context) => ProfilePage(),
         "/update_profile": (context) => UpadteProfilePage(),
+        "/search_user": (context) => SearchUserPage(),
       },
     );
   }
