@@ -13,6 +13,7 @@ Client client = Client()
 Account account = Account(client);
 Databases database = Databases(client);
 
+// Save phone number to the database
 Future<bool> savePhoneToDB(
     {required String phoneNumber, required String userId}) async {
   try {
@@ -30,6 +31,7 @@ Future<bool> savePhoneToDB(
   }
 }
 
+// Check if phone number exists in the database
 Future<String> doesPhoneNumberExist(String phoneNumber) async {
   try {
     final DocumentList match = await database.listDocuments(
@@ -54,21 +56,51 @@ Future<String> doesPhoneNumberExist(String phoneNumber) async {
     return "user_not_found";
   }
 }
-  Future<String> createPhoneSession({required String phoneNumber}) async {
-    try{
-      final userId= await doesPhoneNumberExist(phoneNumber);
-      if(userId=="user_not_found"){
-        final Token data=await account.createPhoneToken(userId: ID.unique(), phone: phoneNumber);
-        savePhoneToDB(phoneNumber: phoneNumber, userId: data.userId);
-        return data.userId;
+
+//Pjpne number authentication
+Future<String> createPhoneSession({required String phoneNumber}) async {
+  try {
+    final userId = await doesPhoneNumberExist(phoneNumber);
+    if (userId == "user_not_found") {
+      final Token data = await account.createPhoneToken(
+          userId: ID.unique(), phone: phoneNumber);
+      savePhoneToDB(phoneNumber: phoneNumber, userId: data.userId);
+      return data.userId;
+    } else {
+      final Token data =
+          await account.createPhoneToken(userId: userId, phone: phoneNumber);
+      return data.userId;
     }
-    else{
-        final Token data=await account.createPhoneToken(userId: userId, phone: phoneNumber);
-        return data.userId;
-    }
-    }
-    on AppwriteException catch(e){
-      print("Login error $e");
-      return "error";
-    }
+  } catch (e) {
+    print("Login error $e");
+    return "error";
+  }
+}
+
+//Login with OTP
+Future<bool> loginWithOTP({required String userId, required String otp}) async {
+  try {
+    final Session session = await account.createSession(
+      userId: userId,
+      secret: otp,
+    );
+    print(session.userId);
+    print("Login successful with OTP!");
+    return true;
+  } catch (e) {
+    print("Login error using OTP: $e");
+    return false;
+  }
+}
+
+//to check whether the session exist or not
+Future<bool> checkSessions() async {
+  try {
+    final Session session = await account.getSession(sessionId: "current");
+    print("Session exist ${session.userId}");
+    return true;
+  } catch (e) {
+    print("Session does not exist $e");
+    return false;
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livecom/controllers/appwrite_controllers.dart';
 import 'package:livecom/pages/chat_page.dart';
 import 'package:livecom/pages/home_page.dart';
 import 'package:livecom/pages/login_page.dart';
@@ -25,15 +26,45 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routes: {
-        '/': (context) => SearchUserPage(),
+        '/': (context) => CheckUserSession(),
         "/splash": (context) => const SplashScreen(),
-        "/home": (context) => const HomePage(),
         "/login": (context) => LoginPage(),
+        "/home": (context) => const HomePage(),
         "/chat": (context) => ChatPage(),
         "/profile": (context) => ProfilePage(),
         "/update_profile": (context) => UpadteProfilePage(),
         "/search_user": (context) => SearchUserPage(),
       },
+    );
+  }
+}
+
+class CheckUserSession extends StatefulWidget {
+  const CheckUserSession({super.key});
+
+  @override
+  State<CheckUserSession> createState() => _CheckUserSessionState();
+}
+
+class _CheckUserSessionState extends State<CheckUserSession> {
+  @override
+  void initState() {
+    checkSessions().then((value) {
+      if (value) {
+        Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+      } else {
+        Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }
