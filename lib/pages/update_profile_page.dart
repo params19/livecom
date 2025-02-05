@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:livecom/constants/color.dart';
 import 'package:livecom/pages/profile_page.dart';
 import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:file_picker/file_picker.dart';
 
 class UpadteProfilePage extends StatefulWidget {
   const UpadteProfilePage({super.key});
@@ -15,6 +18,8 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
 
+  FilePickerResult? _filePickerResult;
+
   @override
   void initState() {
     //load krdo data ko
@@ -23,6 +28,15 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
     });
     // Provider.of<UserDataProvider>(context, listen: false).loadDatafromLocal();
     super.initState();
+  }
+
+  // FilePickerResult? _filePickerResult;
+  void _openFilePicker() async {
+    _filePickerResult = await FilePicker.platform.pickFiles(type: FileType.image);
+    setState(() {
+      _filePickerResult = _filePickerResult;
+    });
+    
   }
 
   @override
