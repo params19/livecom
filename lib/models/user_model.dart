@@ -17,11 +17,11 @@ class UserData {
   // to convert Document data to userdata
   factory UserData.toMap(Map<String, dynamic> map) {
     return UserData(
-        phone: map["phone_no"] ?? "",
+        phone: map["phone"] ?? "",
         userId: map["userId"] ?? "",
         name: map["name"] ?? "",
-        deviceToken: map["device_token"] ?? "",
+        deviceToken: map["deviceToken"] ?? "",
         isOnline: map["isOnline"] ?? false,
-        profilePic: map["profile_pic"] ?? "");
+        profilePic: map["profilePic"] ?? "");
   }
 }

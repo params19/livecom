@@ -12,6 +12,8 @@ class UpadteProfilePage extends StatefulWidget {
 class _UpadteProfilePageState extends State<UpadteProfilePage> {
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> data_passed =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -25,7 +27,7 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
           },
         ),
         title: Text(
-          "Update",
+          data_passed["title"] == "edit" ? "Update" : "Add Details",
           textAlign: TextAlign.left,
           style: TextStyle(
             color: Colors.black,

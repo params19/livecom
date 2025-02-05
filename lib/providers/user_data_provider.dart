@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:livecom/controllers/appwrite_controllers.dart';
 import 'package:livecom/controllers/local_saved_data.dart';
+import 'package:livecom/models/user_model.dart';
 
 class UserDataProvider extends ChangeNotifier {
   String _userId = "";
@@ -22,6 +24,16 @@ class UserDataProvider extends ChangeNotifier {
     _userProfilePic = LocalSavedData.getUserProfile();
     print("data loaded from local $_userId , $_userPhoneNumber, $_userName");
     notifyListeners();
+  }
+
+  // load user data from the server
+  void loadUserData(String userId) async {
+    UserData? userData = await getUserDetails(userId: userId);
+    if (userData != null) {
+      _userName = userData.name ?? "";
+      _userProfilePic = userData.profilePic ?? "";
+      notifyListeners();
+    }
   }
 
   // set User id
@@ -68,4 +80,6 @@ class UserDataProvider extends ChangeNotifier {
     _userDeviceToken = "";
     notifyListeners();
   }
+
+  //l
 }

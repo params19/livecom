@@ -1,5 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
+import 'package:livecom/models/user_model.dart';
 
 const String db = "67a318110036e2465bea";
 const String collection = "67a31826000e0b271f0b";
@@ -104,6 +105,7 @@ Future<bool> checkSessions() async {
     return false;
   }
 }
+
 Future<bool> savePhoneToDb(
     {required String phoneno, required String userId}) async {
   try {
@@ -121,9 +123,21 @@ Future<bool> savePhoneToDb(
   }
 }
 
-
 //Logging out the user
 Future logOutUser() async {
   await account.deleteSession(sessionId: "current");
 }
 
+//To get the user details
+Future<UserData?> getUserDetails({required String userId}) async {
+  try {
+    final response = await database.getDocument(
+        databaseId: db, collectionId: collection, documentId: userId);
+    print("getting user data ");
+    print(response.data);
+    return UserData.toMap(response.data);
+  } catch (e) {
+    print("error in getting user data :$e");
+    return null;
+  }
+}

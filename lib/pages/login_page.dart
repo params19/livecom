@@ -30,7 +30,8 @@ class _PhoneLoginState extends State<LoginPage> {
               .setUserId(userId);
           Provider.of<UserDataProvider>(context, listen: false)
               .setUserPhone(countryCode + _phoneController.text);
-          Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+          Navigator.pushNamedAndRemoveUntil(
+              context, "/update", (route) => false, arguments: {"title" : "add"});
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Error in login with OTP")),
