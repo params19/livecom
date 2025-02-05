@@ -8,6 +8,8 @@ import 'package:livecom/pages/profile_page.dart';
 import 'package:livecom/pages/search_user_page.dart';
 import 'package:livecom/pages/splashscreen.dart';
 import 'package:livecom/pages/update_profile_page.dart';
+import 'package:livecom/providers/user_data_provider.dart';
+import 'package:provider/provider.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,23 +24,28 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Livecom',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserDataProvider()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Livecom',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          useMaterial3: true,
+        ),
+        routes: {
+          '/': (context) => CheckUserSession(),
+          "/splash": (context) => const SplashScreen(),
+          "/login": (context) => LoginPage(),
+          "/home": (context) => const HomePage(),
+          "/chat": (context) => ChatPage(),
+          "/profile": (context) => ProfilePage(),
+          "/update_profile": (context) => UpadteProfilePage(),
+          "/search_user": (context) => SearchUserPage(),
+        },
       ),
-      routes: {
-        '/': (context) => CheckUserSession(),
-        "/splash": (context) => const SplashScreen(),
-        "/login": (context) => LoginPage(),
-        "/home": (context) => const HomePage(),
-        "/chat": (context) => ChatPage(),
-        "/profile": (context) => ProfilePage(),
-        "/update_profile": (context) => UpadteProfilePage(),
-        "/search_user": (context) => SearchUserPage(),
-      },
     );
   }
 }

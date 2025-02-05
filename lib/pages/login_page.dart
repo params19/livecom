@@ -2,6 +2,8 @@ import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:livecom/constants/color.dart';
 import 'package:livecom/controllers/appwrite_controllers.dart';
+import 'package:livecom/providers/user_data_provider.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -24,6 +26,10 @@ class _PhoneLoginState extends State<LoginPage> {
     if (_otpKey.currentState!.validate()) {
       loginWithOTP(userId: userId, otp: _otpController.text).then((value) {
         if (value) {
+          Provider.of<UserDataProvider>(context, listen: false)
+              .setUserId(userId);
+          Provider.of<UserDataProvider>(context, listen: false)
+              .setUserPhone(countryCode + _phoneController.text);
           Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(

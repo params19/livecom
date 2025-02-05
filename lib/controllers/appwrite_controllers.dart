@@ -126,3 +126,4 @@ Future<bool> savePhoneToDb(
 Future logOutUser() async {
   await account.deleteSession(sessionId: "current");
 }
+
