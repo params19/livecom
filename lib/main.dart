@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:livecom/controllers/appwrite_controllers.dart';
+import 'package:livecom/controllers/local_saved_data.dart';
 import 'package:livecom/pages/chat_page.dart';
 import 'package:livecom/pages/home_page.dart';
 import 'package:livecom/pages/login_page.dart';
@@ -8,7 +9,10 @@ import 'package:livecom/pages/search_user_page.dart';
 import 'package:livecom/pages/splashscreen.dart';
 import 'package:livecom/pages/update_profile_page.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await LocalSavedData.init();
   runApp(const MyApp());
 }
 

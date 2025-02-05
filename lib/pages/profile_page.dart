@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:livecom/controllers/appwrite_controllers.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -32,6 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Divider(),
           ListTile(
             onTap: () {
+              logOutUser();
               Navigator.pushNamedAndRemoveUntil(
                   context, "/login", (route) => false);
             },
