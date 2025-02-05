@@ -11,7 +11,7 @@ import 'package:livecom/pages/update_profile_page.dart';
 import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await LocalSavedData.init();
@@ -62,7 +62,8 @@ class _CheckUserSessionState extends State<CheckUserSession> {
   void initState() {
     checkSessions().then((value) {
       if (value) {
-        Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false,
+            arguments: {"title": "Add"});
       } else {
         Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
       }
