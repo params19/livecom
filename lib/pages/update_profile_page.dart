@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:livecom/constants/color.dart';
+import 'package:livecom/controllers/appwrite_controllers.dart';
 import 'package:livecom/pages/profile_page.dart';
 import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
@@ -19,30 +21,75 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
   TextEditingController _phoneController = TextEditingController();
 
   FilePickerResult? _filePickerResult;
+  late String? imageId = "";
+  late String? userId = "";
+
+  final _nameKey = GlobalKey<FormState>();
 
   @override
   void initState() {
-    //load krdo data ko
+    // try to load the data from local database
     Future.delayed(Duration.zero, () {
-      Provider.of<UserDataProvider>(context, listen: false).loadDatafromLocal();
+      userId = Provider.of<UserDataProvider>(context, listen: false).getUserId;
+      Provider.of<UserDataProvider>(context, listen: false)
+          .loadUserData(userId!);
+      imageId =
+          Provider.of<UserDataProvider>(context, listen: false).getUserProfile;
     });
-    // Provider.of<UserDataProvider>(context, listen: false).loadDatafromLocal();
     super.initState();
   }
 
   // FilePickerResult? _filePickerResult;
   void _openFilePicker() async {
-    _filePickerResult = await FilePicker.platform.pickFiles(type: FileType.image);
+    _filePickerResult =
+        await FilePicker.platform.pickFiles(type: FileType.image);
     setState(() {
       _filePickerResult = _filePickerResult;
     });
-    
+  }
+
+  // upload user profile image and save it to bucket and database
+  Future uploadProfileImage() async {
+    try {
+      if (_filePickerResult != null && _filePickerResult!.files.isNotEmpty) {
+        PlatformFile file = _filePickerResult!.files.first;
+        final fileByes = await File(file.path!).readAsBytes();
+        final inputfile =
+            InputFile.fromBytes(bytes: fileByes, filename: file.name);
+
+        // if image already exist for the user profile or not
+        if (imageId != null && imageId != "") {
+          // then update the image
+          await updateImageOnBucket(image: inputfile, oldImageId: imageId!)
+              .then((value) {
+            if (value != null) {
+              imageId = value;
+            }
+          });
+        }
+
+        // create new image and upload to bucket
+        else {
+          await saveImageToBucket(image: inputfile).then((value) {
+            if (value != null) {
+              imageId = value;
+            }
+          });
+        }
+      } else {
+        print("Something went wrong");
+      }
+    } catch (e) {
+      print("Error on uploading image :$e");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> data_passed =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final data_passed =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ??
+            {};
+
     return Consumer<UserDataProvider>(
       builder: (context, value, child) {
         _nameController.text = value.getUserName;
@@ -79,29 +126,40 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
                     SizedBox(
                       height: 30,
                     ),
-                    Stack(
-                      children: [
-                        CircleAvatar(
-                          radius: 120,
-                          backgroundImage:
-                              Image(image: AssetImage("assets/user.png")).image,
-                          backgroundColor: Colors.white,
-                        ),
-                        Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              padding: EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: primary_blue,
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: Icon(
-                                Icons.edit_rounded,
-                                color: Colors.white,
-                              ),
-                            ))
-                      ],
+                    GestureDetector(
+                      onTap: () {
+                        _openFilePicker();
+                      },
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 120,
+                            backgroundImage: _filePickerResult != null
+                                ? Image(
+                                        image: FileImage(File(_filePickerResult!
+                                            .files.first.path!)))
+                                    .image
+                                // : Image(image: AssetImage("assets/user.png"))
+                                //     .image,
+                                : null,
+                            backgroundColor: Colors.grey,
+                          ),
+                          Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: primary_blue,
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: Icon(
+                                  Icons.edit_rounded,
+                                  color: Colors.white,
+                                ),
+                              ))
+                        ],
+                      ),
                     ),
                     SizedBox(
                       height: 20,
@@ -117,13 +175,21 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
                           margin: EdgeInsets.all(6),
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: Expanded(
-                              child: TextFormField(
-                            controller: _nameController,
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Enter your Name"),
-                          )),
+                          child: Form(
+                            key: _nameKey,
+                            child: TextFormField(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "Cannot be empty";
+                                }
+                                return null;
+                              },
+                              controller: _nameController,
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "Enter your Name"),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -152,8 +218,22 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
                       height: 20,
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        // Navigator.pop(context);
+                      onPressed: () async {
+                        print("current image id is $imageId");
+                        if (_nameKey.currentState!.validate()) {
+                          // upload the image if file is picked
+                          if (_filePickerResult != null) {
+                            await uploadProfileImage();
+                          }
+
+                          // save the data to database user collection
+                          await updateUserDetails(imageId ?? "",
+                              userId: userId!, name: _nameController.text);
+
+                          // // navigate the user to the home route
+                          // Navigator.pushNamedAndRemoveUntil(
+                          //     context, "/home", (route) => false);
+                        }
                       },
                       child: Text("Update"),
                       style: ElevatedButton.styleFrom(
