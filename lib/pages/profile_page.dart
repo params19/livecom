@@ -20,7 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           ListTile(
             onTap: () {
-              Navigator.pushNamed(context, "/update_profile");
+              Navigator.pushNamed(context, "/update");
             },
             leading: CircleAvatar(
               backgroundImage: AssetImage("assets/user.png"),

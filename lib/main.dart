@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
           "/home": (context) => const HomePage(),
           "/chat": (context) => ChatPage(),
           "/profile": (context) => ProfilePage(),
-          "/update_profile": (context) => UpadteProfilePage(),
+          "/update": (context) => UpadteProfilePage(),
           "/search_user": (context) => SearchUserPage(),
         },
       ),
@@ -64,7 +64,7 @@ class _CheckUserSessionState extends State<CheckUserSession> {
   void initState() {
     checkSessions().then((value) {
       if (value) {
-        Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false,
+        Navigator.pushNamedAndRemoveUntil(context, "/update", (route) => false,
             arguments: {"title": "Add"});
       } else {
         Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);

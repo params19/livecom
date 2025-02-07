@@ -17,7 +17,7 @@ class UserDataProvider extends ChangeNotifier {
   String get getUserToken => _userDeviceToken;
 
   // to load the data from the device
-  void loadDatafromLocal() {
+ void loadDatafromLocal() {
     _userId = LocalSavedData.getUserId();
     _userPhoneNumber = LocalSavedData.getUserPhone();
     _userName = LocalSavedData.getUserName();
@@ -25,6 +25,7 @@ class UserDataProvider extends ChangeNotifier {
     print("data loaded from local $_userId , $_userPhoneNumber, $_userName");
     notifyListeners();
   }
+
 
   // load user data from the server
   void loadUserData(String userId) async {

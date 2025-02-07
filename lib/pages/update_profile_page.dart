@@ -29,22 +29,28 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
   @override
   void initState() {
     // try to load the data from local database
+    // Future.delayed(Duration.zero, () {
+    //   userId = Provider.of<UserDataProvider>(context, listen: false).getUserId;
+    //   Provider.of<UserDataProvider>(context).loadDatafromLocal();
+    //   imageId =
+    //       Provider.of<UserDataProvider>(context, listen: false).getUserProfile;
+    // });
+    //  userId = Provider.of<UserDataProvider>(context, listen: false).getUserId;
     Future.delayed(Duration.zero, () {
-      userId = Provider.of<UserDataProvider>(context, listen: false).getUserId;
-      Provider.of<UserDataProvider>(context, listen: false)
-          .loadUserData(userId!);
+      Provider.of<UserDataProvider>(context, listen: false).loadDatafromLocal();
       imageId =
           Provider.of<UserDataProvider>(context, listen: false).getUserProfile;
+      userId = Provider.of<UserDataProvider>(context, listen: false).getUserId;
     });
     super.initState();
   }
 
   // FilePickerResult? _filePickerResult;
   void _openFilePicker() async {
-    _filePickerResult =
+    FilePickerResult? result =
         await FilePicker.platform.pickFiles(type: FileType.image);
     setState(() {
-      _filePickerResult = _filePickerResult;
+      _filePickerResult = result;
     });
   }
 
@@ -181,8 +187,9 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return "Cannot be empty";
+                                } else {
+                                  return null;
                                 }
-                                return null;
                               },
                               controller: _nameController,
                               decoration: InputDecoration(
@@ -219,7 +226,7 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
                     ),
                     ElevatedButton(
                       onPressed: () async {
-                        print("current image id is $imageId");
+                        print("Current image id is $imageId");
                         if (_nameKey.currentState!.validate()) {
                           // upload the image if file is picked
                           if (_filePickerResult != null) {

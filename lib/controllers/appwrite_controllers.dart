@@ -158,7 +158,7 @@ Future<bool> updateUserDetails(
         databaseId: db,
         collectionId: collection,
         documentId: userId,
-        data: {"name": name, "profile_pic": pic});
+        data: {"name": name, "profilePic": pic});
 
     Provider.of<UserDataProvider>(navigatorKey.currentContext!, listen: false)
         .setUserName(name);
@@ -167,7 +167,7 @@ Future<bool> updateUserDetails(
     print(data);
     return true;
   } on AppwriteException catch (e) {
-    print("cannot save to db :$e");
+    print("Cannot save to DB :$e");
     return false;
   }
 }
@@ -177,10 +177,10 @@ Future<String?> saveImageToBucket({required InputFile image}) async {
   try {
     final response = await storage.createFile(
         bucketId: storageBucket, fileId: ID.unique(), file: image);
-    print("the response after save to bucket $response");
+    print("The response after save to bucket $response");
     return response.$id;
   } catch (e) {
-    print("error on saving image to bucket :$e");
+    print("Error on saving image to bucket :$e");
     return null;
   }
 }
@@ -197,7 +197,7 @@ Future<String?> updateImageOnBucket(
 
     return newImage;
   } catch (e) {
-    print("cannot update / delete image :$e");
+    print("Cannot Update / Delete image :$e");
     return null;
   }
 }
@@ -210,7 +210,7 @@ Future<bool> deleteImagefromBucket({required String oldImageId}) async {
     await storage.deleteFile(bucketId: storageBucket, fileId: oldImageId);
     return true;
   } catch (e) {
-    print("cannot update / delete image :$e");
+    print("Cannot Update / Delete image :$e");
     return false;
   }
 }
