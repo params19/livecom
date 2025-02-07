@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:appwrite/appwrite.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:livecom/constants/color.dart';
 import 'package:livecom/controllers/appwrite_controllers.dart';
@@ -29,15 +30,7 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
   @override
   void initState() {
     // try to load the data from local database
-    // Future.delayed(Duration.zero, () {
-    //   userId = Provider.of<UserDataProvider>(context, listen: false).getUserId;
-    //   Provider.of<UserDataProvider>(context).loadDatafromLocal();
-    //   imageId =
-    //       Provider.of<UserDataProvider>(context, listen: false).getUserProfile;
-    // });
-    //  userId = Provider.of<UserDataProvider>(context, listen: false).getUserId;
     Future.delayed(Duration.zero, () {
-      Provider.of<UserDataProvider>(context, listen: false).loadDatafromLocal();
       imageId =
           Provider.of<UserDataProvider>(context, listen: false).getUserProfile;
       userId = Provider.of<UserDataProvider>(context, listen: false).getUserId;
@@ -147,7 +140,11 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
                                     .image
                                 // : Image(image: AssetImage("assets/user.png"))
                                 //     .image,
-                                : null,
+                                : value.getUserProfile != "" &&
+                                        value.getUserProfile != null
+                                    ? CachedNetworkImageProvider(
+                                        "https://cloud.appwrite.io/v1/storage/buckets/67a3d9aa002c49506451/files/${value.getUserProfile}/view?project=67a316ad003a50945b8b&mode=admin")
+                                    : null,
                             backgroundColor: Colors.grey,
                           ),
                           Positioned(
@@ -238,11 +235,13 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
                               userId: userId!, name: _nameController.text);
 
                           // // navigate the user to the home route
-                          // Navigator.pushNamedAndRemoveUntil(
-                          //     context, "/home", (route) => false);
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, "/home", (route) => false);
                         }
                       },
-                      child: Text("Update"),
+                      child: Text(
+                        data_passed["title"] == "edit" ? "Update" : "Continue",
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primary_blue,
                         foregroundColor: Colors.white,

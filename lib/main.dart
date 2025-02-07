@@ -11,7 +11,7 @@ import 'package:livecom/pages/update_profile_page.dart';
 import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
 
-final navigatorKey=GlobalKey<NavigatorState>();
+final navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -62,10 +62,23 @@ class CheckUserSession extends StatefulWidget {
 class _CheckUserSessionState extends State<CheckUserSession> {
   @override
   void initState() {
+    Future.delayed(Duration.zero, () {
+      Provider.of<UserDataProvider>(context, listen: false).loadDatafromLocal();
+    });
+
     checkSessions().then((value) {
+      final userName =
+          Provider.of<UserDataProvider>(context, listen: false).getUserName;
+      print("Username: ${userName}");
+
       if (value) {
-        Navigator.pushNamedAndRemoveUntil(context, "/update", (route) => false,
-            arguments: {"title": "Add"});
+        if (userName != null && userName != "") {
+          Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+              context, "/update", (route) => false,
+              arguments: {"title": "Add"});
+        }
       } else {
         Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
       }

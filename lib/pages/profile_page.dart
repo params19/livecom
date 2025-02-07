@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:livecom/controllers/appwrite_controllers.dart';
+import 'package:livecom/controllers/local_saved_data.dart';
+import 'package:livecom/providers/user_data_provider.dart';
+import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -12,41 +15,50 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Profile"),
-      ),
-      body: ListView(
-        children: [
-          ListTile(
-            onTap: () {
-              Navigator.pushNamed(context, "/update");
-            },
-            leading: CircleAvatar(
-              backgroundImage: AssetImage("assets/user.png"),
-              backgroundColor: Colors.white,
+    return Consumer<UserDataProvider>(builder: (context, value, child) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text("Profile"),
+        ),
+        body: ListView(
+          children: [
+            ListTile(
+              onTap: () {
+                Navigator.pushNamed(context, "/update",
+                    arguments: {"title": "Edit"});
+              },
+              leading: CircleAvatar(
+                backgroundImage: value.getUserProfile != null ||
+                        value.getUserProfile != ""
+                    ? CachedNetworkImageProvider(
+                        "https://cloud.appwrite.io/v1/storage/buckets/67a3d9aa002c49506451/files/${value.getUserProfile}/view?project=67a316ad003a50945b8b&mode=admin")
+                    : Image(
+                        image: AssetImage("assets/user.png"),
+                      ).image,
+              ),
+              title: Text(value.getUserName),
+              subtitle: Text(value.getUserName),
+              trailing: Icon(Icons.edit_outlined),
             ),
-            title: Text("User Name"),
-            subtitle: Text("User Number"),
-            trailing: Icon(Icons.edit_outlined),
-          ),
-          Divider(),
-          ListTile(
-            onTap: () {
-              logOutUser();
-              Navigator.pushNamedAndRemoveUntil(
-                  context, "/login", (route) => false);
-            },
-            leading: Icon(Icons.logout_outlined),
-            title: Text("Logout"),
-          ),
-          Divider(),
-          ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text("About"),
-          ),
-        ],
-      ),
-    );
+            Divider(),
+            ListTile(
+              onTap: () async{
+                await LocalSavedData.clearAllData();
+                await logOutUser();
+                Navigator.pushNamedAndRemoveUntil(
+                    context, "/login", (route) => false);
+              },
+              leading: Icon(Icons.logout_outlined),
+              title: Text("Logout"),
+            ),
+            Divider(),
+            ListTile(
+              leading: Icon(Icons.info_outline),
+              title: Text("About"),
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
