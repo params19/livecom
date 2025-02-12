@@ -37,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ).image,
               ),
               title: Text(value.getUserName),
-              subtitle: Text(value.getUserName),
+              subtitle: Text(value.getUserNumber),
               trailing: Icon(Icons.edit_outlined),
             ),
             Divider(),

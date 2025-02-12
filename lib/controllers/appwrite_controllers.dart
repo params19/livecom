@@ -12,7 +12,8 @@ const String storageBucket = "67a3d9aa002c49506451";
 // ✅ Define client globally
 Client client = Client()
     .setEndpoint('https://cloud.appwrite.io/v1') // Required
-    .setProject('67a316ad003a50945b8b'); // Your project ID
+    .setProject('67a316ad003a50945b8b');
+    // .addHeader('X-Appwrite-Key', 'standard_0da085b740fd02623d003ae147482205f828fa21ff0e44fe7aa5cff2c2aca8077aeb5906b0250aaa8f2aa1d378d80f2bbc9bab3086d85cf9e80769e3adbfc8144300436d6da3b29c3edb31061402804b7da30f4d5a2d7bd5ab58dcd48a912e6d01a059dc39e3b2bdbbf4fbec8217b79fbb0b1ec6120585dd36bd39ad842d0c11');// Your project ID
 
 // ✅ Use client for services
 Account account = Account(client);
@@ -58,7 +59,7 @@ Future<String> doesPhoneNumberExist(String phoneNumber) async {
       return "user_not_found";
     }
   } on AppwriteException catch (e) {
-    print("Error on readind DB $e");
+    print("Error on reading DB $e");
     return "user_not_found";
   }
 }
@@ -212,5 +213,25 @@ Future<bool> deleteImagefromBucket({required String oldImageId}) async {
   } catch (e) {
     print("Cannot Update / Delete image :$e");
     return false;
+  }
+}
+
+// search users
+Future<DocumentList?> searchUsers(
+    {required String searchItem, required String userId}) async {
+  try {
+    final DocumentList users = await database.listDocuments(
+        databaseId: db,
+        collectionId: collection,
+        queries: [
+          Query.search("phone", searchItem),
+          Query.notEqual("userId", userId)
+        ]);
+
+    print("Total Match Users ${users.total}");
+    return users;
+  } catch (e) {
+    print("Error on Search Users :$e");
+    return null;
   }
 }

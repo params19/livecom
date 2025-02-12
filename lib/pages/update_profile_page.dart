@@ -31,10 +31,13 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
   void initState() {
     // try to load the data from local database
     Future.delayed(Duration.zero, () {
+      userId = Provider.of<UserDataProvider>(context, listen: false).getUserId;
+      Provider.of<UserDataProvider>(context, listen: false)
+          .loadUserData(userId!);
       imageId =
           Provider.of<UserDataProvider>(context, listen: false).getUserProfile;
-      userId = Provider.of<UserDataProvider>(context, listen: false).getUserId;
     });
+
     super.initState();
   }
 
