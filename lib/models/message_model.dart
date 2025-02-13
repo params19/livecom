@@ -23,7 +23,7 @@ class MessageModel {
       message: map["message"],
       sender: map["senderId"],
       receiver: map["receiverId"],
-      timestamp: DateTime.parse(map["timestamp"]),
+      timestamp: DateTime.parse(map["timeStamp"]),
       isSeenByReceiver: map["isSeenbyReceiver"],
       messageId: map["\$id"],
       isImage: map["isImage"],

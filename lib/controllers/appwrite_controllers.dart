@@ -1,6 +1,8 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:livecom/main.dart';
+import 'package:livecom/models/chat_data_model.dart';
+import 'package:livecom/models/message_model.dart';
 import 'package:livecom/models/user_model.dart';
 import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
@@ -8,12 +10,13 @@ import 'package:provider/provider.dart';
 const String db = "67a318110036e2465bea";
 const String collection = "67a31826000e0b271f0b";
 const String storageBucket = "67a3d9aa002c49506451";
+const String chat_collection = "67ad73110010567ab847";
 
 // ✅ Define client globally
 Client client = Client()
     .setEndpoint('https://cloud.appwrite.io/v1') // Required
     .setProject('67a316ad003a50945b8b');
-    // .addHeader('X-Appwrite-Key', 'standard_0da085b740fd02623d003ae147482205f828fa21ff0e44fe7aa5cff2c2aca8077aeb5906b0250aaa8f2aa1d378d80f2bbc9bab3086d85cf9e80769e3adbfc8144300436d6da3b29c3edb31061402804b7da30f4d5a2d7bd5ab58dcd48a912e6d01a059dc39e3b2bdbbf4fbec8217b79fbb0b1ec6120585dd36bd39ad842d0c11');// Your project ID
+// .addHeader('X-Appwrite-Key', 'standard_0da085b740fd02623d003ae147482205f828fa21ff0e44fe7aa5cff2c2aca8077aeb5906b0250aaa8f2aa1d378d80f2bbc9bab3086d85cf9e80769e3adbfc8144300436d6da3b29c3edb31061402804b7da30f4d5a2d7bd5ab58dcd48a912e6d01a059dc39e3b2bdbbf4fbec8217b79fbb0b1ec6120585dd36bd39ad842d0c11');// Your project ID
 
 // ✅ Use client for services
 Account account = Account(client);
@@ -232,6 +235,83 @@ Future<DocumentList?> searchUsers(
     return users;
   } catch (e) {
     print("Error on Search Users :$e");
+    return null;
+  }
+}
+
+// to create a new chat and save to DB
+Future createNewChat(
+    {required String message,
+    required String senderId,
+    required String receiverId,
+    required bool isImage,
+    required bool isGroupInvite}) async {
+  try {
+    final msg = await database.createDocument(
+        databaseId: db,
+        collectionId: chat_collection,
+        documentId: ID.unique(),
+        data: {
+          "message": message,
+          "senderId": senderId,
+          "receiverId": receiverId,
+          "timeStamp": DateTime.now().toIso8601String(),
+          "isSeenbyReceiver": false,
+          "isImage": isImage,
+          "userData": [senderId, receiverId],
+        });
+
+    print("Message Send !");
+    return true;
+  } catch (e) {
+    print("Failed to Send Message :$e");
+    return false;
+  }
+}
+
+// to list all the chats belonging to the current user
+Future<Map<String, List<ChatDataModel>>?> currentUserChats(
+    String userId) async {
+  try {
+    var results = await database
+        .listDocuments(databaseId: db, collectionId: chat_collection, queries: [
+      Query.or(
+          [Query.equal("senderId", userId), Query.equal("receiverId", userId)]),
+      Query.orderDesc("timeStamp"),
+      Query.limit(2000)
+    ]);
+
+    final DocumentList chatDocuments = results;
+
+    print(
+        "Chat Documents ${chatDocuments.total} and Documents ${chatDocuments.documents.length}");
+    Map<String, List<ChatDataModel>> chats = {};
+
+    if (chatDocuments.documents.isNotEmpty) {
+      for (var i = 0; i < chatDocuments.documents.length; i++) {
+        var doc = chatDocuments.documents[i];
+        String sender = doc.data["senderId"];
+        String receiver = doc.data["receiverId"];
+
+        MessageModel message = MessageModel.fromMap(doc.data);
+
+        List<UserData> users = [];
+        for (var user in doc.data["userData"]) {
+          users.add(UserData.toMap(user));
+        }
+
+        String key = (sender == userId) ? receiver : sender;
+
+        if (chats[key] == null) {
+          chats[key] = [];
+        }
+        chats[key]!.add(ChatDataModel(message: message, users: users));
+      }
+    }
+
+    return chats;
+  } catch (e) {
+    print("Error in Reading Current User chats :$e");
     return null;
   }
 }
