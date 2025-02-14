@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:livecom/controllers/appwrite_controllers.dart';
 import 'package:livecom/controllers/local_saved_data.dart';
+import 'package:livecom/providers/chat_provider.dart';
 import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -42,8 +43,11 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             Divider(),
             ListTile(
-              onTap: () async{
+              onTap: () async {
                 await LocalSavedData.clearAllData();
+                Provider.of<UserDataProvider>(context, listen: false)
+                    .clearAllProvider();
+                Provider.of<ChatProvider>(context, listen: false).clearChats();
                 await logOutUser();
                 Navigator.pushNamedAndRemoveUntil(
                     context, "/login", (route) => false);

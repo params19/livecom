@@ -68,6 +68,8 @@ class _ChatPageState extends State<ChatPage> {
         Provider.of<UserDataProvider>(context, listen: false).getUserId;
     currentUserName =
         Provider.of<UserDataProvider>(context, listen: false).getUserName;
+
+    Provider.of<ChatProvider>(context, listen: false).loadChats(currentUserId);
     super.initState();
   }
 
@@ -93,6 +95,8 @@ class _ChatPageState extends State<ChatPage> {
                 ),
                 currentUserId,
                 [UserData(phone: "", userId: currentUserId), receiver]);
+
+            messageController.clear();
           }
         });
       });
@@ -156,19 +160,67 @@ class _ChatPageState extends State<ChatPage> {
             children: [
               Expanded(
                 child: Container(
-                    padding: EdgeInsets.all(8),
-                    child: ListView.builder(
-                        itemCount: userAndOtherChats.length,
-                        itemBuilder: (context, index) {
-                          final msg = userAndOtherChats[
-                                  userAndOtherChats.length - 1 - index]
-                              .message;
+                  padding: EdgeInsets.all(8),
+                  child: ListView.builder(
+                      reverse: true,
+                      itemCount: userAndOtherChats.length,
+                      itemBuilder: (context, index) {
+                        final msg = userAndOtherChats[
+                                userAndOtherChats.length - 1 - index]
+                            .message;
 
-                          ChatMessage(
-                              isImage: msg.isImage ?? false,
-                              message: msg,
-                              currentUserId: currentUserId);
-                        })),
+                        print("User Chats :${userAndOtherChats.length}");
+
+                        return GestureDetector(
+                          onLongPress: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: msg.isImage == true
+                                    ? Text(msg.sender == currentUserId
+                                        ? "Choose what you want to do with this image."
+                                        : "This image cant be modified")
+                                    : Text(
+                                        "${msg.message.length > 20 ? msg.message.substring(0, 20) : msg.message} ..."),
+                                content: msg.isImage == true
+                                    ? Text(msg.sender == currentUserId
+                                        ? 'Delete this image'
+                                        : 'This image cant be delted')
+                                    : Text(msg.sender == currentUserId
+                                        ? 'Choose what you want to do with this message.'
+                                        : 'This message cant be modified'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("Cancel")),
+                                  TextButton(
+                                      onPressed: () {}, child: Text("Edit")),
+                                  msg.sender == currentUserId
+                                      ? TextButton(
+                                          onPressed: () {
+                                            Provider.of<ChatProvider>(context,
+                                                    listen: false)
+                                                .deleteMessage(
+                                                    msg, currentUserId);
+
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("Delete"))
+                                      : SizedBox(),
+                                ],
+                              ),
+                            );
+                          },
+                          child: ChatMessage(
+                            isImage: msg.isImage ?? false,
+                            message: msg,
+                            currentUserId: currentUserId,
+                          ),
+                        );
+                      }),
+                ),
               ),
               Container(
                   margin: EdgeInsets.all(6),
@@ -179,7 +231,10 @@ class _ChatPageState extends State<ChatPage> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: TextFormField(
+                        child: TextField(
+                          onSubmitted: (_) {
+                            _sendMessage(receiver: receiver);
+                          },
                           controller: messageController,
                           decoration: InputDecoration(
                               border: InputBorder.none,
@@ -187,7 +242,11 @@ class _ChatPageState extends State<ChatPage> {
                         ),
                       ),
                       IconButton(onPressed: () {}, icon: Icon(Icons.image)),
-                      IconButton(onPressed: () {}, icon: Icon(Icons.send))
+                      IconButton(
+                          onPressed: () {
+                            _sendMessage(receiver: receiver);
+                          },
+                          icon: Icon(Icons.send))
                     ],
                   ))
             ],

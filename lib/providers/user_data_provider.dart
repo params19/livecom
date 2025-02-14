@@ -81,6 +81,4 @@ class UserDataProvider extends ChangeNotifier {
     _userDeviceToken = "";
     notifyListeners();
   }
-
-  //l
 }

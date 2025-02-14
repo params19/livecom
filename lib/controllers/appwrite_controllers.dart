@@ -144,6 +144,10 @@ Future<UserData?> getUserDetails({required String userId}) async {
         databaseId: db, collectionId: collection, documentId: userId);
     print("getting user data ");
     print(response.data);
+    Provider.of<UserDataProvider>(navigatorKey.currentContext!, listen: false)
+        .setUserName(response.data["name"] ?? "");
+    Provider.of<UserDataProvider>(navigatorKey.currentContext!, listen: false)
+        .setProfilePic(response.data["profilePic"] ?? "");
     return UserData.toMap(response.data);
   } catch (e) {
     print("error in getting user data :$e");
