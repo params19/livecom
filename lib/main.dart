@@ -8,6 +8,7 @@ import 'package:livecom/pages/profile_page.dart';
 import 'package:livecom/pages/search_user_page.dart';
 import 'package:livecom/pages/splashscreen.dart';
 import 'package:livecom/pages/update_profile_page.dart';
+import 'package:livecom/providers/chat_provider.dart';
 import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => UserDataProvider()),
+        ChangeNotifierProvider(create: (context) => ChatProvider()),
       ],
       child: MaterialApp(
         navigatorKey: navigatorKey,
