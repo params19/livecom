@@ -72,7 +72,18 @@ void main() async {
     }
   });
 
-  
+  // for handling in terminated state
+  final RemoteMessage? message =
+      await FirebaseMessaging.instance.getInitialMessage();
+
+  if (message != null) {
+    print("Launched from terminated state");
+    Future.delayed(Duration(seconds: 1), () {
+      navigatorKey.currentState!.pushNamed(
+        "/home",
+      );
+    });
+  }
   runApp(const MyApp());
 }
 
