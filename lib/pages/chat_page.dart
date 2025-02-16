@@ -33,8 +33,6 @@ class _ChatPageState extends State<ChatPage> {
 
   FilePickerResult? _filePickerResult;
 
-  
-
   @override
   void initState() {
     // TODO: implement initState
@@ -47,7 +45,7 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
   }
 
-   // to open file picker
+  // to open file picker
   void _openFilePicker(UserData receiver) async {
     FilePickerResult? result = await FilePicker.platform
         .pickFiles(allowMultiple: true, type: FileType.image);
@@ -97,7 +95,7 @@ class _ChatPageState extends State<ChatPage> {
         }
       });
     } else {
-      print("file pick cancelled by user");
+      print("File pick cancelled by user");
     }
   }
 
@@ -361,7 +359,9 @@ class _ChatPageState extends State<ChatPage> {
                               hintText: "Type a message..."),
                         ),
                       ),
-                      IconButton(onPressed: () {}, icon: Icon(Icons.image)),
+                      IconButton(onPressed: () {
+                        _openFilePicker(receiver);
+                      }, icon: Icon(Icons.image)),
                       IconButton(
                           onPressed: () {
                             _sendMessage(receiver: receiver);
