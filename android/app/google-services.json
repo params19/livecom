@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1039907593907",
+    "project_id": "push-notifications-632f3",
+    "storage_bucket": "push-notifications-632f3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1039907593907:android:43aeeb17391cf25434dac6",
+        "android_client_info": {
+          "package_name": "com.example.livecom"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiZDRU2GaEN59SDmpLWr3h7O_JJffhK-M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -44,15 +44,16 @@ class _ProfilePageState extends State<ProfilePage> {
             Divider(),
             ListTile(
               onTap: () async {
-                await LocalSavedData.clearAllData();
-                Provider.of<UserDataProvider>(context, listen: false)
-                    .clearAllProvider();
-                Provider.of<ChatProvider>(context, listen: false).clearChats();
-                updateOnlineStatus(
+                 updateOnlineStatus(
                     status: false,
                     userId:
                         Provider.of<UserDataProvider>(context, listen: false)
                             .getUserId);
+                await LocalSavedData.clearAllData();
+                Provider.of<UserDataProvider>(context, listen: false)
+                    .clearAllProvider();
+                Provider.of<ChatProvider>(context, listen: false).clearChats();
+               
                 await logOutUser();
                 Navigator.pushNamedAndRemoveUntil(
                     context, "/login", (route) => false);

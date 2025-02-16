@@ -25,7 +25,6 @@ class _HomePageState extends State<HomePage> {
     currentUserId =
         Provider.of<UserDataProvider>(context, listen: false).getUserId;
     Provider.of<ChatProvider>(context, listen: false).loadChats(currentUserId);
-    // updateOnlineStatus(status: true, userId: )
     subscribeToRealtime(userId: currentUserId);
     super.initState();
   }

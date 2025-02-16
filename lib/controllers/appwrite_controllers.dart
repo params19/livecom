@@ -417,3 +417,20 @@ Future deleteCurrentUserChat({required String chatId}) async {
     print("Error on Deleting chat message : $e");
   }
 }
+
+// to save users device token to user collection
+Future saveUserDeviceToken(String token, String userId) async {
+  try {
+    await database.updateDocument(
+        databaseId: db,
+        collectionId: userCollection,
+        documentId: userId,
+        data: {"deviceToken": token});
+    print("Device token saved to db");
+
+    return true;
+  } catch (e) {
+    print("Cannot save device token :$e");
+    return false;
+  }
+}

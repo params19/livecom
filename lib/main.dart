@@ -1,4 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:livecom/controllers/notification_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:livecom/controllers/appwrite_controllers.dart';
 import 'package:livecom/controllers/local_saved_data.dart';
 import 'package:livecom/pages/chat_page.dart';
@@ -10,57 +15,70 @@ import 'package:livecom/pages/splashscreen.dart';
 import 'package:livecom/pages/update_profile_page.dart';
 import 'package:livecom/providers/chat_provider.dart';
 import 'package:livecom/providers/user_data_provider.dart';
-import 'package:provider/provider.dart';
+import 'firebase_options.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
+
+Future<void> _firebaseBackgroundMessage(RemoteMessage message) async {
+  print("Handling background message: ${message.messageId}");
+}
 
 class LifecycleEventHandler extends WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    String currentUserId = Provider.of<UserDataProvider>(
-            navigatorKey.currentState!.context,
-            listen: false)
-        .getUserId;
+    final context = navigatorKey.currentState?.context;
+    if (context == null) return;
+
+    final String currentUserId =
+        Provider.of<UserDataProvider>(context, listen: false).getUserId;
+
     super.didChangeAppLifecycleState(state);
 
-    switch (state) {
-      case AppLifecycleState.resumed:
-        updateOnlineStatus(status: true, userId: currentUserId);
-        print("App resumed");
-        break;
-      case AppLifecycleState.inactive:
-        updateOnlineStatus(status: false, userId: currentUserId);
-        print("App inactive");
+    bool isOnline = state == AppLifecycleState.resumed;
+    updateOnlineStatus(status: isOnline, userId: currentUserId);
 
-        break;
-      case AppLifecycleState.paused:
-        updateOnlineStatus(status: false, userId: currentUserId);
-        print("App paused");
-
-        break;
-      case AppLifecycleState.detached:
-        updateOnlineStatus(status: false, userId: currentUserId);
-        print("App detched");
-
-        break;
-      case AppLifecycleState.hidden:
-        updateOnlineStatus(status: false, userId: currentUserId);
-        print("App hidden");
-    }
+    print("App state changed: $state");
   }
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   WidgetsBinding.instance.addObserver(LifecycleEventHandler());
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await LocalSavedData.init();
+
+  // Initialize Firebase messaging
+  await PushNotifications.init();
+  await PushNotifications.localNotiInit();
+  FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundMessage);
+
+  // Handle background notification taps
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    if (message.notification != null) {
+      navigatorKey.currentState?.pushNamed("/message", arguments: message);
+    }
+  });
+
+  // Handle foreground notifications
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    String payloadData = jsonEncode(message.data);
+    if (message.notification != null) {
+      PushNotifications.showSimpleNotification(
+        title: message.notification!.title!,
+        body: message.notification!.body!,
+        payload: payloadData,
+      );
+    }
+  });
+
+  
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -101,36 +119,36 @@ class CheckUserSession extends StatefulWidget {
 class _CheckUserSessionState extends State<CheckUserSession> {
   @override
   void initState() {
+    super.initState();
     Future.delayed(Duration.zero, () {
       Provider.of<UserDataProvider>(context, listen: false).loadDatafromLocal();
     });
 
-    checkSessions().then((value) {
+    checkSessions().then((isLoggedIn) {
       final userName =
           Provider.of<UserDataProvider>(context, listen: false).getUserName;
-      print("Username: ${userName}");
 
-      if (value) {
-        if (userName != null && userName != "") {
+      if (isLoggedIn) {
+        if (userName.isNotEmpty) {
           Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
         } else {
           Navigator.pushNamedAndRemoveUntil(
-              context, "/update", (route) => false,
-              arguments: {"title": "Add"});
+            context,
+            "/update",
+            (route) => false,
+            arguments: {"title": "Add"},
+          );
         }
       } else {
         Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
       }
     });
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
     );
   }
 }
