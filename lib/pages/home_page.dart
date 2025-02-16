@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:livecom/constants/color.dart';
 import 'package:livecom/constants/date_format.dart';
+import 'package:livecom/controllers/appwrite_controllers.dart';
 import 'package:livecom/models/chat_data_model.dart';
 import 'package:livecom/models/user_model.dart';
 import 'package:livecom/providers/chat_provider.dart';
@@ -24,6 +25,8 @@ class _HomePageState extends State<HomePage> {
     currentUserId =
         Provider.of<UserDataProvider>(context, listen: false).getUserId;
     Provider.of<ChatProvider>(context, listen: false).loadChats(currentUserId);
+
+    subscribeToRealtime(userId: currentUserId);
     super.initState();
   }
 

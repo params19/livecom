@@ -4,6 +4,7 @@ import 'package:livecom/main.dart';
 import 'package:livecom/models/chat_data_model.dart';
 import 'package:livecom/models/message_model.dart';
 import 'package:livecom/models/user_model.dart';
+import 'package:livecom/providers/chat_provider.dart';
 import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -20,8 +21,45 @@ Client client = Client()
 
 // ✅ Use client for services
 Account account = Account(client);
-Databases database = Databases(client);
+final Databases database = Databases(client);
 final Storage storage = Storage(client);
+final Realtime realtime = Realtime(client);
+
+RealtimeSubscription? chatSubscription;
+// for the realtime chat subscription
+RealtimeSubscription? subscription;
+RealtimeSubscription? groupMsgSubscription;
+// to subscribe to realtime changes
+subscribeToRealtime({required String userId}) {
+  subscription = realtime.subscribe([
+    "databases.$db.collections.$chat_collection.documents",
+    "databases.$db.collections.$chat_collection.documents"
+  ]);
+
+  print("Subscribing to realtime");
+
+  subscription!.stream.listen((data) {
+    print("Some event happend");
+    // print(data.events);
+    // print(data.payload);
+    final firstItem = data.events[0].split(".");
+    final eventType = firstItem[firstItem.length - 1];
+    print("Event type is $eventType");
+    if (eventType == "create") {
+      Provider.of<ChatProvider>(navigatorKey.currentState!.context,
+              listen: false)
+          .loadChats(userId);
+    } else if (eventType == "update") {
+      Provider.of<ChatProvider>(navigatorKey.currentState!.context,
+              listen: false)
+          .loadChats(userId);
+    } else if (eventType == "delete") {
+      Provider.of<ChatProvider>(navigatorKey.currentState!.context,
+              listen: false)
+          .loadChats(userId);
+    }
+  });
+}
 
 // Save phone number to the database
 Future<bool> savePhoneToDB(
@@ -270,6 +308,23 @@ Future createNewChat(
   } catch (e) {
     print("Failed to Send Message :$e");
     return false;
+  }
+}
+
+// to edit the chat message and update in the database
+Future editChat({
+  required String chatId,
+  required String message,
+}) async {
+  try {
+    await database.updateDocument(
+        databaseId: db,
+        collectionId: chat_collection,
+        documentId: chatId,
+        data: {"message": message});
+    print("Message updated");
+  } catch (e) {
+    print("Error on editing message :$e");
   }
 }
 

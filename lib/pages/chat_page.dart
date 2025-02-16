@@ -23,6 +23,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   TextEditingController messageController = TextEditingController();
+  TextEditingController editmessageController = TextEditingController();
 
   late String currentUserId;
   late String currentUserName;
@@ -101,6 +102,36 @@ class _ChatPageState extends State<ChatPage> {
         });
       });
     }
+  }
+
+  Future<void> editMessage() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Edit Message"),
+          content: TextFormField(
+            controller: editmessageController,
+            maxLines: 10,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                // Add your edit message logic here
+                Navigator.pop(context);
+              },
+              child: Text("Ok"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -195,8 +226,52 @@ class _ChatPageState extends State<ChatPage> {
                                         Navigator.pop(context);
                                       },
                                       child: Text("Cancel")),
-                                  TextButton(
-                                      onPressed: () {}, child: Text("Edit")),
+                                  msg.sender == currentUserId
+                                      ? TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            editmessageController.text =
+                                                msg.message;
+
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    AlertDialog(
+                                                      title: Text(
+                                                          "Edit this message"),
+                                                      content: TextFormField(
+                                                        controller:
+                                                            editmessageController,
+                                                        maxLines: 10,
+                                                      ),
+                                                      actions: [
+                                                        TextButton(
+                                                            onPressed: () {
+                                                              editChat(
+                                                                chatId: msg
+                                                                    .messageId!,
+                                                                message:
+                                                                    editmessageController
+                                                                        .text,
+                                                              );
+                                                              Navigator.pop(
+                                                                  context);
+                                                              editmessageController
+                                                                  .text = "";
+                                                            },
+                                                            child: Text("Ok")),
+                                                        TextButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child:
+                                                                Text("Cancel")),
+                                                      ],
+                                                    ));
+                                          },
+                                          child: Text("Edit"))
+                                      : SizedBox(),
                                   msg.sender == currentUserId
                                       ? TextButton(
                                           onPressed: () {
