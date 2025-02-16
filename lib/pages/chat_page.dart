@@ -137,9 +137,21 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     UserData receiver = ModalRoute.of(context)!.settings.arguments as UserData;
+
     return Consumer<ChatProvider>(
       builder: (context, value, child) {
         final userAndOtherChats = value.getAllChats[receiver.userId] ?? [];
+
+        List<String> receiverMsgList = [];
+        // get all the messages that are not seen by the receiver
+        for (var chat in userAndOtherChats) {
+          if (chat.message.receiver == currentUserId) {
+            if (chat.message.isSeenByReceiver == false) {
+              receiverMsgList.add(chat.message.messageId!);
+            }
+          }
+        }
+        updateIsSeen(chatsIds: receiverMsgList);
         return Scaffold(
           appBar: AppBar(
             backgroundColor: background_color,

@@ -328,6 +328,21 @@ Future editChat({
   }
 }
 
+// to delete the chat message from the database
+Future updateIsSeen({required List<String> chatsIds}) async {
+  try {
+    for (var chatid in chatsIds) {
+      await database.updateDocument(
+          databaseId: db,
+          collectionId: chat_collection,
+          documentId: chatid,
+          data: {"isSeenbyReceiver": true});
+      print("Update is seen");
+    }
+  } catch (e) {
+    print("Error in update isseen :$e");
+  }
+}
 // to list all the chats belonging to the current user
 Future<Map<String, List<ChatDataModel>>?> currentUserChats(
     String userId) async {
