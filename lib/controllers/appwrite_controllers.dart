@@ -12,6 +12,8 @@ const String db = "67a318110036e2465bea";
 const String collection = "67a31826000e0b271f0b";
 const String storageBucket = "67a3d9aa002c49506451";
 const String chat_collection = "67ad73110010567ab847";
+const String userCollection = "67a31826000e0b271f0b"; // Add this line
+
 
 // ✅ Define client globally
 Client client = Client()
@@ -343,6 +345,22 @@ Future updateIsSeen({required List<String> chatsIds}) async {
     print("Error in update isseen :$e");
   }
 }
+
+// to update the online status
+Future updateOnlineStatus(
+    {required bool status, required String userId}) async {
+  try {
+    await database.updateDocument(
+        databaseId: db,
+        collectionId: userCollection,
+        documentId: userId,
+        data: {"isOnline": status});
+    print("Updated user online status $status ");
+  } catch (e) {
+    print("Unable to update online status : $e");
+  }
+}
+
 // to list all the chats belonging to the current user
 Future<Map<String, List<ChatDataModel>>?> currentUserChats(
     String userId) async {

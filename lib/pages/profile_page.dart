@@ -48,6 +48,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 Provider.of<UserDataProvider>(context, listen: false)
                     .clearAllProvider();
                 Provider.of<ChatProvider>(context, listen: false).clearChats();
+                updateOnlineStatus(
+                    status: false,
+                    userId:
+                        Provider.of<UserDataProvider>(context, listen: false)
+                            .getUserId);
                 await logOutUser();
                 Navigator.pushNamedAndRemoveUntil(
                     context, "/login", (route) => false);

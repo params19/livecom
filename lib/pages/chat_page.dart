@@ -1,5 +1,7 @@
+import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:livecom/constants/chat_message.dart';
@@ -11,6 +13,7 @@ import 'package:livecom/pages/home_page.dart';
 import 'package:livecom/providers/chat_provider.dart';
 import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
+import 'dart:io' as io;
 
 class ChatPage extends StatefulWidget {
   // final List<MessageModel> messages;
@@ -28,39 +31,9 @@ class _ChatPageState extends State<ChatPage> {
   late String currentUserId;
   late String currentUserName;
 
-  List messages = [
-    MessageModel(
-        message: "Hello",
-        sender: "101",
-        receiver: "202",
-        timestamp: DateTime(2024, 1, 1),
-        isSeenByReceiver: true,
-        isImage: true),
-    MessageModel(
-      message: "hi",
-      sender: "202",
-      receiver: "101",
-      timestamp: DateTime(2024, 1, 2),
-      isSeenByReceiver: false,
-      isImage: true,
-    ),
-    MessageModel(
-      message: "how are you?",
-      sender: "101",
-      receiver: "202",
-      timestamp: DateTime(2024, 1, 3),
-      isSeenByReceiver: false,
-      isImage: true,
-    ),
-    MessageModel(
-      message: "how are you?",
-      sender: "101",
-      receiver: "202",
-      timestamp: DateTime(2024, 1, 3),
-      isSeenByReceiver: false,
-      isImage: true,
-    ),
-  ];
+  FilePickerResult? _filePickerResult;
+
+  
 
   @override
   void initState() {
@@ -72,6 +45,60 @@ class _ChatPageState extends State<ChatPage> {
 
     Provider.of<ChatProvider>(context, listen: false).loadChats(currentUserId);
     super.initState();
+  }
+
+   // to open file picker
+  void _openFilePicker(UserData receiver) async {
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(allowMultiple: true, type: FileType.image);
+
+    setState(() {
+      _filePickerResult = result;
+      uploadAllImage(receiver);
+    });
+  }
+
+  // to upload files to our storage bucket and our database
+  void uploadAllImage(UserData receiver) async {
+    if (_filePickerResult != null) {
+      _filePickerResult!.paths.forEach((path) {
+        if (path != null) {
+          var file = io.File(path);
+          final fileBytes = file.readAsBytesSync();
+          final inputfile = InputFile.fromBytes(
+              bytes: fileBytes, filename: file.path.split("/").last);
+
+          // saving image to our storage bucket
+          saveImageToBucket(image: inputfile).then((imageId) {
+            if (imageId != null) {
+              createNewChat(
+                message: imageId,
+                senderId: currentUserId,
+                receiverId: receiver.userId,
+                isImage: true,
+                isGroupInvite: false,
+              ).then((value) {
+                if (value) {
+                  Provider.of<ChatProvider>(context, listen: false).addMessage(
+                      MessageModel(
+                        message: imageId,
+                        sender: currentUserId,
+                        receiver: receiver.userId,
+                        timestamp: DateTime.now(),
+                        isSeenByReceiver: false,
+                        isImage: true,
+                      ),
+                      currentUserId,
+                      [UserData(phone: "", userId: currentUserId), receiver]);
+                }
+              });
+            }
+          });
+        }
+      });
+    } else {
+      print("file pick cancelled by user");
+    }
   }
 
 // to send simple text message
@@ -142,6 +169,12 @@ class _ChatPageState extends State<ChatPage> {
       builder: (context, value, child) {
         final userAndOtherChats = value.getAllChats[receiver.userId] ?? [];
 
+        bool? otherUserOnline = userAndOtherChats.isNotEmpty
+            ? userAndOtherChats[0].users[0].userId == receiver.userId
+                ? userAndOtherChats[0].users[0].isOnline
+                : userAndOtherChats[0].users[1].isOnline
+            : false;
+
         List<String> receiverMsgList = [];
         // get all the messages that are not seen by the receiver
         for (var chat in userAndOtherChats) {
@@ -191,7 +224,7 @@ class _ChatPageState extends State<ChatPage> {
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                     Text(
-                      userAndOtherChats == true ? "Online" : "Offline",
+                      otherUserOnline == true ? "Online" : "Offline",
                       style: TextStyle(fontSize: 14),
                     ),
                   ],
