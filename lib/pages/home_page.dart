@@ -6,6 +6,7 @@ import 'package:livecom/controllers/appwrite_controllers.dart';
 import 'package:livecom/controllers/notification_controller.dart';
 import 'package:livecom/models/chat_data_model.dart';
 import 'package:livecom/models/user_model.dart';
+import 'package:livecom/pages/search_user_page.dart';
 import 'package:livecom/providers/chat_provider.dart';
 import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
@@ -52,7 +53,7 @@ class _HomePageState extends State<HomePage> {
                   backgroundImage: value.getUserProfile != null &&
                           value.getUserProfile != ""
                       ? CachedNetworkImageProvider(
-                          "https://cloud.appwrite.io/v1/storage/buckets/67a3d9aa002c49506451/files/${value.getUserProfile}/view?project=67a316ad003a50945b8b&mode=admin")
+                          "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${value.getUserProfile}/view?project=67b7e512000635cad2ad&mode=admin")
                       : const AssetImage("assets/user.png") as ImageProvider,
                 );
               },
@@ -100,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                                   image: AssetImage("assets/user.png"),
                                 ).image
                               : CachedNetworkImageProvider(
-                                  "https://cloud.appwrite.io/v1/storage/buckets/67a3d9aa002c49506451/files/${otherUser.profilePic}/view?project=67a316ad003a50945b8b&mode=admin")),
+                                  "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${otherUser.profilePic}/view?project=67b7e512000635cad2ad&mode=admin")),
                       Positioned(
                         right: 0,
                         bottom: 0,
@@ -146,7 +147,12 @@ class _HomePageState extends State<HomePage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SearchUserPage()),
+          );
+        },
         child: const Icon(Icons.chat),
       ),
     );

@@ -32,7 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 backgroundImage: value.getUserProfile != null ||
                         value.getUserProfile != ""
                     ? CachedNetworkImageProvider(
-                        "https://cloud.appwrite.io/v1/storage/buckets/67a3d9aa002c49506451/files/${value.getUserProfile}/view?project=67a316ad003a50945b8b&mode=admin")
+                        "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${value.getUserProfile}/view?project=67b7e512000635cad2ad&mode=admin")
                     : Image(
                         image: AssetImage("assets/user.png"),
                       ).image,

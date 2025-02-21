@@ -8,18 +8,16 @@ import 'package:livecom/providers/chat_provider.dart';
 import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
 
-const String db = "67a318110036e2465bea";
-const String collection = "67a31826000e0b271f0b";
-const String storageBucket = "67a3d9aa002c49506451";
-const String chat_collection = "67ad73110010567ab847";
-const String userCollection = "67a31826000e0b271f0b"; // Add this line
+const String db = "67b7e7d800060607c3e4";
+const String userCollection = "67b7e7e2003adb6ed544"; 
+const String storageBucket = "67b7f7a000142a335f4e";
+const String chat_collection = "67b89a320017cbd53479";
 
 
-// ✅ Define client globally
 Client client = Client()
-    .setEndpoint('https://cloud.appwrite.io/v1') // Required
-    .setProject('67a316ad003a50945b8b');
-// .addHeader('X-Appwrite-Key', 'standard_0da085b740fd02623d003ae147482205f828fa21ff0e44fe7aa5cff2c2aca8077aeb5906b0250aaa8f2aa1d378d80f2bbc9bab3086d85cf9e80769e3adbfc8144300436d6da3b29c3edb31061402804b7da30f4d5a2d7bd5ab58dcd48a912e6d01a059dc39e3b2bdbbf4fbec8217b79fbb0b1ec6120585dd36bd39ad842d0c11');// Your project ID
+  ..setEndpoint("https://cloud.appwrite.io/v1")
+  ..setProject('67b7e512000635cad2ad')
+  ..setSelfSigned(status: true);
 
 // ✅ Use client for services
 Account account = Account(client);
@@ -69,7 +67,7 @@ Future<bool> savePhoneToDB(
   try {
     await database.createDocument(
       databaseId: db,
-      collectionId: collection,
+      collectionId: userCollection,
       documentId: userId,
       data: {'phone': phoneNumber, 'userId': userId},
     );
@@ -86,7 +84,7 @@ Future<String> doesPhoneNumberExist(String phoneNumber) async {
   try {
     final DocumentList match = await database.listDocuments(
       databaseId: db,
-      collectionId: collection,
+      collectionId: userCollection,
       queries: [Query.equal("phone", phoneNumber)],
     );
     if (match.documents.isNotEmpty) {
@@ -155,12 +153,14 @@ Future<bool> checkSessions() async {
   }
 }
 
+
+//to save the user details to the database
 Future<bool> savePhoneToDb(
     {required String phoneno, required String userId}) async {
   try {
     final response = await database.createDocument(
         databaseId: db,
-        collectionId: collection,
+        collectionId: userCollection,
         documentId: userId,
         data: {"phone": phoneno, "userId": userId});
 
@@ -181,7 +181,7 @@ Future logOutUser() async {
 Future<UserData?> getUserDetails({required String userId}) async {
   try {
     final response = await database.getDocument(
-        databaseId: db, collectionId: collection, documentId: userId);
+        databaseId: db, collectionId: userCollection, documentId: userId);
     print("getting user data ");
     print(response.data);
     Provider.of<UserDataProvider>(navigatorKey.currentContext!, listen: false)
@@ -204,7 +204,7 @@ Future<bool> updateUserDetails(
   try {
     final data = await database.updateDocument(
         databaseId: db,
-        collectionId: collection,
+        collectionId: userCollection,
         documentId: userId,
         data: {"name": name, "profilePic": pic});
 
@@ -269,7 +269,7 @@ Future<DocumentList?> searchUsers(
   try {
     final DocumentList users = await database.listDocuments(
         databaseId: db,
-        collectionId: collection,
+        collectionId: userCollection,
         queries: [
           Query.search("phone", searchItem),
           Query.notEqual("userId", userId)

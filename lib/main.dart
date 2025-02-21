@@ -106,8 +106,8 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         routes: {
-          '/': (context) => LoginPage(),
-          "/splash": (context) => const SplashScreen(),
+          '/': (context) => CheckUserSession(),
+          // "/splash": (context) => const SplashScreen(),
           "/login": (context) => LoginPage(),
           "/home": (context) => const HomePage(),
           "/chat": (context) => ChatPage(),
