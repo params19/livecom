@@ -201,15 +201,27 @@ class _ChatPageState extends State<ChatPage> {
             ),
             title: Row(
               children: [
+                // CircleAvatar(
+                //   backgroundImage: receiver.profilePic == null ||
+                //           (receiver.profilePic?.isEmpty ?? true)
+                //       ? Image(
+                //           image: AssetImage("assets/user.png"),
+                //         ).image
+                //       : CachedNetworkImageProvider(
+                //           "https://cloud.appwrite.io/v1/storage/buckets/67a3d9aa002c49506451/files/${receiver.profilePic}/view?project=67a316ad003a50945b8b&mode=admin"),
+                // ),
                 CircleAvatar(
-                  backgroundImage: receiver.profilePic == "" ||
-                          receiver.profilePic == null
-                      ? Image(
-                          image: AssetImage("assets/user.png"),
-                        ).image
+                  backgroundImage: receiver.profilePic == null ||
+                          (receiver.profilePic?.isEmpty ?? true)
+                      ? AssetImage("assets/user.png")
                       : CachedNetworkImageProvider(
-                          "https://cloud.appwrite.io/v1/storage/buckets/67a3d9aa002c49506451/files/${receiver.profilePic}/view?project=67a316ad003a50945b8b&mode=admin"),
+                          "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${receiver.profilePic}/view?project=67b7e512000635cad2ad&mode=admin",
+                        ),
+                  onBackgroundImageError: (_, __) {
+                    print("Failed to load profile pic");
+                  },
                 ),
+
                 SizedBox(
                   width: 10,
                 ),
@@ -359,9 +371,11 @@ class _ChatPageState extends State<ChatPage> {
                               hintText: "Type a message..."),
                         ),
                       ),
-                      IconButton(onPressed: () {
-                        _openFilePicker(receiver);
-                      }, icon: Icon(Icons.image)),
+                      IconButton(
+                          onPressed: () {
+                            _openFilePicker(receiver);
+                          },
+                          icon: Icon(Icons.image)),
                       IconButton(
                           onPressed: () {
                             _sendMessage(receiver: receiver);

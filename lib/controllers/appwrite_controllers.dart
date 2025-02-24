@@ -9,10 +9,9 @@ import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
 
 const String db = "67b7e7d800060607c3e4";
-const String userCollection = "67b7e7e2003adb6ed544"; 
+const String userCollection = "67b7e7e2003adb6ed544";
 const String storageBucket = "67b7f7a000142a335f4e";
 const String chat_collection = "67b89a320017cbd53479";
-
 
 Client client = Client()
   ..setEndpoint("https://cloud.appwrite.io/v1")
@@ -33,7 +32,7 @@ RealtimeSubscription? groupMsgSubscription;
 subscribeToRealtime({required String userId}) {
   subscription = realtime.subscribe([
     "databases.$db.collections.$chat_collection.documents",
-    "databases.$db.collections.$chat_collection.documents"
+    "databases.$db.collections.$userCollection.documents"
   ]);
 
   print("Subscribing to realtime");
@@ -153,7 +152,6 @@ Future<bool> checkSessions() async {
   }
 }
 
-
 //to save the user details to the database
 Future<bool> savePhoneToDb(
     {required String phoneno, required String userId}) async {
@@ -251,7 +249,6 @@ Future<String?> updateImageOnBucket(
 }
 
 // to only delete the image from the storage bucket
-
 Future<bool> deleteImagefromBucket({required String oldImageId}) async {
   try {
     // to delete the old image
@@ -347,17 +344,23 @@ Future updateIsSeen({required List<String> chatsIds}) async {
 }
 
 // to update the online status
-Future updateOnlineStatus(
-    {required bool status, required String userId}) async {
+
+Future<void> updateOnlineStatus({
+  required bool status,
+  required String userId,
+}) async {
+  print("updateOnlineStatus function called with status: $status, userId: $userId");
+
   try {
     await database.updateDocument(
-        databaseId: db,
-        collectionId: userCollection,
-        documentId: userId,
-        data: {"isOnline": status});
-    print("Updated user online status $status ");
+      databaseId: db,
+      collectionId: userCollection,
+      documentId: userId,
+      data: {"isOnline": status},
+    );
+    print("Updated user online status: $status");
   } catch (e) {
-    print("Unable to update online status : $e");
+    print("Unable to update online status: $e");
   }
 }
 
