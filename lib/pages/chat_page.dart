@@ -88,6 +88,10 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                       currentUserId,
                       [UserData(phone: "", userId: currentUserId), receiver]);
+                      sendNotificationtoOtherUser(
+                notificationTitle: '$currentUserName sent you a image',
+                notificationBody: "check it out",
+                deviceToken: receiver.deviceToken!);
                 }
               });
             }
@@ -121,7 +125,10 @@ class _ChatPageState extends State<ChatPage> {
                 ),
                 currentUserId,
                 [UserData(phone: "", userId: currentUserId), receiver]);
-
+            sendNotificationtoOtherUser(
+                notificationTitle: '$currentUserName sent you a message',
+                notificationBody: messageController.text,
+                deviceToken: receiver.deviceToken!);
             messageController.clear();
           }
         });

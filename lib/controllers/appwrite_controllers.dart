@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:livecom/main.dart';
@@ -7,6 +9,7 @@ import 'package:livecom/models/user_model.dart';
 import 'package:livecom/providers/chat_provider.dart';
 import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 const String db = "67b7e7d800060607c3e4";
 const String userCollection = "67b7e7e2003adb6ed544";
@@ -349,7 +352,8 @@ Future<void> updateOnlineStatus({
   required bool status,
   required String userId,
 }) async {
-  print("updateOnlineStatus function called with status: $status, userId: $userId");
+  print(
+      "updateOnlineStatus function called with status: $status, userId: $userId");
 
   try {
     await database.updateDocument(
@@ -435,5 +439,31 @@ Future saveUserDeviceToken(String token, String userId) async {
   } catch (e) {
     print("Cannot save device token :$e");
     return false;
+  }
+}
+
+// to send notification to other user
+Future sendNotificationtoOtherUser({
+  required String notificationTitle,
+  required String notificationBody,
+  required String deviceToken,
+}) async {
+  try {
+    print("sending notification");
+    final Map<String, dynamic> body = {
+      "deviceToken": deviceToken,
+      "message": {"title": notificationTitle, "body": notificationBody},
+    };
+
+    final response = await http.post(
+        Uri.parse("https://67bca59d4c806ce9da08.appwrite.global/"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(body));
+
+    if (response.statusCode == 200) {
+      print("Notification send to other user");
+    }
+  } catch (e) {
+    print("Notification cannot be sent");
   }
 }
