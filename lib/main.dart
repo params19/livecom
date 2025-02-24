@@ -270,6 +270,7 @@ void main() async {
     }
   });
 
+  // Handle foreground notifications
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     String payloadData = jsonEncode(message.data);
     if (message.notification != null) {

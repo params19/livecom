@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:livecom/controllers/appwrite_controllers.dart';
 import 'package:livecom/models/chat_data_model.dart';

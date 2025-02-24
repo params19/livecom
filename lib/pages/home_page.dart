@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    updateOnlineStatus(status: true, userId: currentUserId);
     return Scaffold(
       backgroundColor: background_color,
       appBar: AppBar(

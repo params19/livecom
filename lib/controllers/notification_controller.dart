@@ -4,6 +4,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:livecom/controllers/appwrite_controllers.dart';
 import 'package:livecom/controllers/local_saved_data.dart';
 import 'package:livecom/main.dart';
+import 'package:livecom/providers/user_data_provider.dart';
+import 'package:provider/provider.dart';
 
 class PushNotifications {
   static final _firebaseMessaging = FirebaseMessaging.instance;
@@ -26,7 +28,11 @@ class PushNotifications {
     try {
       String token;
       token = (await _firebaseMessaging.getToken())!;
-      saveUserDeviceToken(token, LocalSavedData.getUserId());
+      saveUserDeviceToken(
+          token!,
+          Provider.of<UserDataProvider>(navigatorKey.currentState!.context,
+                  listen: false)
+              .getUserId);
       print("Device token: $token");
 
       return token;

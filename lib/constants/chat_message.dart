@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:livecom/constants/color.dart';
 import 'package:livecom/constants/date_format.dart';
 import 'package:livecom/models/message_model.dart';
-//change h yahn line 43 pe 6:02 pe dekh lena
 class ChatMessage extends StatefulWidget {
   final MessageModel message;
   final String currentUserId;
@@ -40,7 +39,7 @@ class _ChatMessageState extends State<ChatMessage> {
                         borderRadius: BorderRadius.circular(10),
                         child: CachedNetworkImage(
                             imageUrl:
-                                "https://cloud.appwrite.io/v1/storage/buckets/67a3d9aa002c49506451/files/${widget.message.message}/view?project=67a316ad003a50945b8b&mode=admin",
+                                "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${widget.message.message}/view?project=67b7e512000635cad2ad&mode=admin",
                             height: 200,
                             width: 200,
                             fit: BoxFit.cover),
