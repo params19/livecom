@@ -43,34 +43,49 @@ class _SearchUserPageState extends State<SearchUserPage> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(50),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              onSubmitted: (_) => _handleSearch(),
-              decoration: InputDecoration(
-                hintText: "Enter phone number",
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: _handleSearch,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: Colors.black), // Default border
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
-                      color: Colors.black), // Border when not focused
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
-                      color: Colors.black, width: 2), // Border when focused
+          preferredSize: Size.fromHeight(110),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _searchController,
+                  onSubmitted: (_) => _handleSearch(),
+                  decoration: InputDecoration(
+                    hintText: "Enter phone number",
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search),
+                      onPressed: _handleSearch,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide:
+                          BorderSide(color: Colors.black), // Default border
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                          color: Colors.black), // Border when not focused
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                          color: Colors.black, width: 2), // Border when focused
+                    ),
+                  ),
                 ),
               ),
-            ),
+              ListTile(
+                leading: Icon(Icons.group_add_outlined),
+                title: Text("Create new group"),
+                trailing: Icon(
+                  Icons
+                      .arrow_forward_ios, // Add an arrow for navigation indication
+                  color: Colors.grey, // Subtle arrow color
+                  size: 18,
+                ),
+              )
+            ],
           ),
         ),
       ),
@@ -105,8 +120,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
                       title: Text(searchedUsers.documents[index].data["name"] ??
                           "No Name"),
                       subtitle: Text(
-                          searchedUsers.documents[index].data["phone"] ??
-                              ""),
+                          searchedUsers.documents[index].data["phone"] ?? ""),
                     );
                   },
                 ),

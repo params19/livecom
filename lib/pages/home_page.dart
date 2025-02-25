@@ -35,126 +35,148 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     updateOnlineStatus(status: true, userId: currentUserId);
-    return Scaffold(
-      backgroundColor: background_color,
-      appBar: AppBar(
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
         backgroundColor: background_color,
-        scrolledUnderElevation: 0,
-        elevation: 0,
-        title: const Text(
-          "Chats",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 29),
+        appBar: AppBar(
+          backgroundColor: background_color,
+          scrolledUnderElevation: 0,
+          elevation: 0,
+          title: const Text(
+            "Chats",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 29),
+          ),
+          actions: [
+            GestureDetector(
+              onTap: () => Navigator.pushNamed(context, "/profile"),
+              child: Consumer<UserDataProvider>(
+                builder: (context, value, child) {
+                  return CircleAvatar(
+                    backgroundImage: value.getUserProfile != null &&
+                            value.getUserProfile != ""
+                        ? CachedNetworkImageProvider(
+                            "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${value.getUserProfile}/view?project=67b7e512000635cad2ad&mode=admin")
+                        : const AssetImage("assets/user.png") as ImageProvider,
+                  );
+                },
+              ),
+            ),
+          ],
+          bottom: TabBar(
+            tabs: [
+              Tab(
+                text: "Direct Messages",
+              ),
+              Tab(
+                text: "Groups",
+              ),
+            ],
+          ),
         ),
-        actions: [
-          GestureDetector(
-            onTap: () => Navigator.pushNamed(context, "/profile"),
-            child: Consumer<UserDataProvider>(
+        body: TabBarView(
+          children: [
+            Consumer<ChatProvider>(
               builder: (context, value, child) {
-                return CircleAvatar(
-                  backgroundImage: value.getUserProfile != null &&
-                          value.getUserProfile != ""
-                      ? CachedNetworkImageProvider(
-                          "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${value.getUserProfile}/view?project=67b7e512000635cad2ad&mode=admin")
-                      : const AssetImage("assets/user.png") as ImageProvider,
-                );
+                if (value.getAllChats.isEmpty) {
+                  return const Center(
+                    child: Text("No chats yet!"),
+                  );
+                } else {
+                  List otherUsers = value.getAllChats.keys.toList();
+
+                  return ListView.builder(
+                    itemCount: otherUsers.length,
+                    itemBuilder: (context, index) {
+                      List<ChatDataModel> chatData =
+                          value.getAllChats[otherUsers[index]]!;
+                      int totalChats = chatData.length;
+                      UserData otherUser =
+                          chatData[0].users[0].userId == currentUserId
+                              ? chatData[0].users[1]
+                              : chatData[0].users[0];
+
+                      int unreadMsg =
+                          chatData.fold(0, (previousValue, element) {
+                        return element.message.isSeenByReceiver
+                            ? previousValue
+                            : previousValue + 1;
+                      });
+
+                      return ListTile(
+                        onTap: () {
+                          Navigator.pushNamed(context, "/chat",
+                              arguments: otherUser);
+                        },
+                        leading: Stack(
+                          children: [
+                            CircleAvatar(
+                              backgroundImage: otherUser.profilePic == null ||
+                                      otherUser.profilePic!.isEmpty
+                                  ? const AssetImage("assets/user.png")
+                                  : CachedNetworkImageProvider(
+                                      "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${otherUser.profilePic}/view?project=67b7e512000635cad2ad&mode=admin",
+                                    ) as ImageProvider,
+                            ),
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: CircleAvatar(
+                                radius: 6,
+                                backgroundColor: otherUser.isOnline!
+                                    ? Colors.green
+                                    : Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        title: Text(otherUser.name ?? "Unknown"),
+                        subtitle: Text(
+                          "${chatData[totalChats - 1].message.sender == currentUserId ? "You: " : ""}"
+                          "${chatData[totalChats - 1].message.isImage! ? "Sent an image" : chatData[totalChats - 1].message.message}",
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            if (chatData[totalChats - 1].message.sender !=
+                                    currentUserId &&
+                                unreadMsg > 0)
+                              CircleAvatar(
+                                backgroundColor: primary_blue,
+                                radius: 10,
+                                child: Text(
+                                  unreadMsg.toString(),
+                                  style: const TextStyle(
+                                      fontSize: 11, color: Colors.white),
+                                ),
+                              ),
+                            const SizedBox(height: 8),
+                            Text(formatDate(
+                                chatData[totalChats - 1].message.timestamp)),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                }
               },
             ),
-          ),
-        ],
-      ),
-      body: Consumer<ChatProvider>(
-        builder: (context, value, child) {
-          if (value.getAllChats.isEmpty) {
-            return const Center(
-              child: Text("No chats yet!"),
+            const Center(
+              child: Text("Groups"),
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SearchUserPage()),
             );
-          } else {
-            List otherUsers = value.getAllChats.keys.toList();
-
-            return ListView.builder(
-              itemCount: otherUsers.length,
-              itemBuilder: (context, index) {
-                List<ChatDataModel> chatData =
-                    value.getAllChats[otherUsers[index]]!;
-                int totalChats = chatData.length;
-                UserData otherUser =
-                    chatData[0].users[0].userId == currentUserId
-                        ? chatData[0].users[1]
-                        : chatData[0].users[0];
-
-                int unreadMsg = 0;
-                chatData.fold(unreadMsg, (previousValue, element) {
-                  if (element.message.isSeenByReceiver == false) {
-                    return unreadMsg++;
-                  }
-                  return unreadMsg;
-                });
-                return ListTile(
-                  onTap: () {
-                    Navigator.pushNamed(context, "/chat", arguments: otherUser);
-                  },
-                  leading: Stack(
-                    children: [
-                      CircleAvatar(
-                          backgroundImage: otherUser.profilePic == null ||
-                                  otherUser.profilePic!.isEmpty
-                              ? Image(
-                                  image: AssetImage("assets/user.png"),
-                                ).image
-                              : CachedNetworkImageProvider(
-                                  "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${otherUser.profilePic}/view?project=67b7e512000635cad2ad&mode=admin")),
-                      Positioned(
-                        right: 0,
-                        bottom: 0,
-                        child: CircleAvatar(
-                          radius: 6,
-                          backgroundColor:
-                              otherUser.isOnline == true ? Colors.green : null,
-                        ),
-                      ),
-                    ],
-                  ),
-                  title: Text(otherUser.name!),
-                  subtitle: Text(
-                    "${chatData[totalChats - 1].message.sender == currentUserId ? "You: " : ""}${chatData[totalChats - 1].message.isImage == true ? "Sent an image" : chatData[totalChats - 1].message.message}",
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      chatData[totalChats - 1].message.sender != currentUserId
-                          ? unreadMsg != 0
-                              ? CircleAvatar(
-                                  backgroundColor: primary_blue,
-                                  radius: 10,
-                                  child: Text(
-                                    unreadMsg.toString(),
-                                    style: TextStyle(
-                                        fontSize: 11, color: Colors.white),
-                                  ),
-                                )
-                              : SizedBox()
-                          : SizedBox(),
-                      SizedBox(height: 8),
-                      Text(formatDate(
-                          chatData[totalChats - 1].message.timestamp)),
-                    ],
-                  ),
-                );
-              },
-            );
-          }
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => SearchUserPage()),
-          );
-        },
-        child: const Icon(Icons.chat),
+          },
+          child: const Icon(Icons.chat),
+        ),
       ),
     );
   }
