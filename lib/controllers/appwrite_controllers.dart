@@ -635,3 +635,35 @@ Future<Map<String, List<GroupMessageModel>>?> readGroupMessages(
     return null;
   }
 }
+
+// to exit the specific group
+Future<bool> exitGroup(
+    {required String groupId, required String currentUser}) async {
+  try {
+    //  read the group members first
+    final result = await database.getDocument(
+        databaseId: db,
+        collectionId: groupCollection,
+        documentId: groupId,
+        queries: [
+          Query.select(["members"])
+        ]);
+
+    List existingMembers = result.data["members"];
+
+    if (existingMembers.contains(currentUser)) {
+      existingMembers.remove(currentUser);
+    }
+
+    //  update the document of the specific group
+    await database.updateDocument(
+        databaseId: db,
+        collectionId: groupCollection,
+        documentId: groupId,
+        data: {"members": existingMembers, "userData": existingMembers});
+    return true;
+  } catch (e) {
+    print("Error on leaving group :$e");
+    return false;
+  }
+}
