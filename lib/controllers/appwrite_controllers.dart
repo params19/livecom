@@ -15,6 +15,8 @@ const String db = "67b7e7d800060607c3e4";
 const String userCollection = "67b7e7e2003adb6ed544";
 const String storageBucket = "67b7f7a000142a335f4e";
 const String chat_collection = "67b89a320017cbd53479";
+const String groupCollection = "67bd4729000f69af4142";
+const String groupMessageCollection = "67bd48dd0007b2eec3ea";
 
 Client client = Client()
   ..setEndpoint("https://cloud.appwrite.io/v1")
@@ -465,5 +467,74 @@ Future sendNotificationtoOtherUser({
     }
   } catch (e) {
     print("Notification cannot be sent");
+  }
+}
+
+// Group Functions
+// create a new group
+Future<bool> createNewGroup(
+    {required String currentUser,
+    required String groupName,
+    required String groupDesc,
+    bool? isOpen,
+    required String image}) async {
+  try {
+    await database.createDocument(
+        databaseId: db,
+        collectionId: groupCollection,
+        documentId: ID.unique(),
+        data: {
+          "admin": currentUser,
+          "groupName": groupName,
+          "groupDesc": groupDesc,
+          "image": image,
+          "isPublic": isOpen,
+          "members": [currentUser],
+          "userData": [currentUser]
+        });
+    return true;
+  } catch (e) {
+    print("Failed to create new group $e");
+    return false;
+  }
+}
+
+// to get all the groups of the current user
+Future<bool> updateExistingGroup(
+    {required String groupId,
+    required String groupName,
+    required String groupDesc,
+    bool? isOpen,
+    required String image}) async {
+  try {
+    await database.updateDocument(
+        databaseId: db,
+        collectionId: groupCollection,
+        documentId: groupId,
+        data: {
+          "groupName": groupName,
+          "groupDesc": groupDesc,
+          "image": image,
+          "isPublic": isOpen,
+        });
+    return true;
+  } catch (e) {
+    print("Failed to update the group $e");
+    return false;
+  }
+}
+
+// read all the groups current user is joined now.
+Future<DocumentList?> readAllGroups({required String currentUserId}) async {
+  try {
+    var result = await database.listDocuments(
+        databaseId: db,
+        collectionId: groupCollection,
+        queries: [Query.equal("members", currentUserId), Query.limit(100)]);
+
+    return result;
+  } catch (e) {
+    print("Error on reading group $e");
+    return null;
   }
 }
