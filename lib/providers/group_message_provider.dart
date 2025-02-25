@@ -31,6 +31,29 @@ class GroupMessageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // read all the group messages where the user is present
+  readAllGroupMsg() {
+    List<String> groupIds = [];
+    for (var group in _joinedGroups) {
+      groupIds.add(group.groupId);
+    }
+    print("Total groups ${groupIds.length}");
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(Duration(seconds: 1), () async {
+      if (groupIds.isNotEmpty) {
+        final result = await readGroupMessages(groupIds: groupIds);
+        if (result != null) {
+          result.forEach((key, value) {
+            // sorting in descending timestamp
+            value.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+          });
+          _groupMessages = result;
+        }
+        notifyListeners();
+      }
+    });
+  }
+
   // add group message
   addGroupMessage({required String groupId, required GroupMessageModel msg}) {
     try {

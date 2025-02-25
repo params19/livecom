@@ -4,6 +4,7 @@ import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:livecom/main.dart';
 import 'package:livecom/models/chat_data_model.dart';
+import 'package:livecom/models/group_message_model.dart';
 import 'package:livecom/models/message_model.dart';
 import 'package:livecom/models/user_model.dart';
 import 'package:livecom/providers/chat_provider.dart';
@@ -578,5 +579,59 @@ Future<bool> updateGroupMessage(
   } catch (e) {
     print("Error on updating group chat :$e");
     return false;
+  }
+}
+
+// delete the specific group message
+Future deleteGroupMessage({required String messageId}) async {
+  try {
+    await database.deleteDocument(
+        databaseId: db,
+        collectionId: groupMessageCollection,
+        documentId: messageId);
+  } catch (e) {
+    print("Error in deleting group message :$e");
+  }
+}
+
+// reading all the group messages
+Future<Map<String, List<GroupMessageModel>>?> readGroupMessages(
+    {required List<String> groupIds}) async {
+  try {
+    var results = await database.listDocuments(
+        databaseId: db,
+        collectionId: groupMessageCollection,
+        queries: [
+          Query.equal("groupId", groupIds),
+          Query.orderDesc("timeStamp"),
+          Query.limit(2000)
+        ]);
+
+    final DocumentList groupChatDocuments = results;
+
+    Map<String, List<GroupMessageModel>> chats = {};
+
+    if (groupChatDocuments.documents.isNotEmpty) {
+      for (var i = 0; i < groupChatDocuments.documents.length; i++) {
+        var doc = groupChatDocuments.documents[i];
+
+        GroupMessageModel message = GroupMessageModel.fromMap(doc.data);
+        String groupId = doc.data["groupId"];
+
+        String key = groupId;
+
+        if (chats[key] == null) {
+          chats[key] = [];
+        }
+        chats[key]!.add(message);
+      }
+    }
+
+    print("Loaded chats ${chats.length}");
+
+    return chats;
+  } catch (e) {
+    print("Error in reading group chat messages :$e");
+    return null;
   }
 }
