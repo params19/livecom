@@ -538,3 +538,45 @@ Future<DocumentList?> readAllGroups({required String currentUserId}) async {
     return null;
   }
 }
+
+// send a message to the group
+Future<bool> sendGroupMessage(
+    {required String groupId,
+    required String message,
+    required String senderId,
+    bool? isImage}) async {
+  try {
+    await database.createDocument(
+        databaseId: db,
+        collectionId: groupMessageCollection,
+        documentId: ID.unique(),
+        data: {
+          "groupId": groupId,
+          "message": message,
+          "senderId": senderId,
+          "timeStamp": DateTime.now().toIso8601String(),
+          "isImage": isImage ?? false,
+          "userData": [senderId]
+        });
+    return true;
+  } catch (e) {
+    print("Error on sending group message ");
+    return false;
+  }
+}
+
+// update the group message
+Future<bool> updateGroupMessage(
+    {required String messageId, required String newMessage}) async {
+  try {
+    await database.updateDocument(
+        databaseId: db,
+        collectionId: groupMessageCollection,
+        documentId: messageId,
+        data: {"message": newMessage});
+    return true;
+  } catch (e) {
+    print("Error on updating group chat :$e");
+    return false;
+  }
+}

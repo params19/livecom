@@ -1,8 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:livecom/constants/color.dart';
+import 'package:livecom/constants/memberCalculate.dart';
+import 'package:livecom/models/group_message_model.dart';
 import 'package:livecom/models/groups_model.dart';
+import 'package:livecom/models/user_model.dart';
 import 'package:livecom/pages/home_page.dart';
+import 'package:livecom/providers/group_message_provider.dart';
 import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -25,6 +29,42 @@ class _GroupChatPageState extends State<GroupChatPage> {
         Provider.of<UserDataProvider>(context, listen: false).getUserId;
   }
 
+  //  void _sendGroupMessage(
+  //     {required String groupId,
+  //     required GroupModel groupData,
+  //     required String message,
+  //     required String senderId,
+  //     bool? isImage}) async {
+  //   await sendGroupMessage(
+  //           groupId: groupId,
+  //           message: message,
+  //           isImage: isImage,
+  //           senderId: senderId)
+  //       .then((value) {
+  //     if (value) {
+  //        List<String> userTokens=[];
+
+  //             for(var i=0;i<groupData.userData.length;i++){
+  //               if(groupData.userData[i].userId!=currentUser){
+  //               userTokens.add(groupData.userData[i].deviceToken??"");
+  //               }
+  //             }
+  //             print("users token are $userTokens");
+  //       Provider.of<GroupMessageProvider>(context, listen: false)
+  //           .addGroupMessage(
+  //               groupId: groupId,
+  //               msg: GroupMessageModel(
+  //                   messageId: "",
+  //                   groupId: groupId,
+  //                   message: message,
+  //                   senderId: senderId,
+  //                   timestamp: DateTime.now(),
+  //                   userData: [UserData(phone: "", userId: senderId)],
+  //                   isImage: isImage));
+  //     }
+  //     _messageController.clear();
+  //   });
+  // }
   @override
   Widget build(BuildContext context) {
     final GroupModel group =
@@ -53,9 +93,6 @@ class _GroupChatPageState extends State<GroupChatPage> {
                   : CachedNetworkImageProvider(
                       "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${group.image}/view?project=67b7e512000635cad2ad&mode=admin",
                     ),
-              onBackgroundImageError: (_, __) {
-                debugPrint("Failed to load profile pic");
-              },
             ),
             const SizedBox(width: 10),
             Column(
@@ -66,57 +103,47 @@ class _GroupChatPageState extends State<GroupChatPage> {
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 18),
                 ),
+                Text(
+                  memCal(group.members.length),
+                  style: TextStyle(fontSize: 14),
+                ),
               ],
             ),
           ],
         ),
-        actions: [
-          PopupMenuButton<String>(
-            itemBuilder: (context) => [
-              if (group.isPublic || group.admin == currentUser)
-                PopupMenuItem<String>(
-                  onTap: () => Future.delayed(Duration.zero, () {
-                    Navigator.pushNamed(context, "/invite_members",
-                        arguments: group);
-                  }),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.group_add_outlined),
-                      SizedBox(width: 8),
-                      Text("Invite Members"),
-                    ],
+      ),
+      body: Column(
+        children: [
+          Expanded(child: Container()), // Placeholder for messages UI
+          Container(
+            margin: EdgeInsets.all(6),
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+                color: secondary_color,
+                borderRadius: BorderRadius.circular(20)),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Type a message..."),
                   ),
                 ),
-              if (group.admin == currentUser)
-                PopupMenuItem<String>(
-                  onTap: () => Future.delayed(Duration.zero, () {
-                    Navigator.pushNamed(context, "/modify_group",
-                        arguments: group);
-                  }),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.edit_outlined),
-                      SizedBox(width: 8),
-                      Text("Edit Group"),
-                    ],
-                  ),
-                ),
-              if (group.admin != currentUser)
-                PopupMenuItem<String>(
-                  onTap: () {
-                    
-                  },
-                  child: const Row(
-                    children: [
-                      Icon(Icons.exit_to_app),
-                      SizedBox(width: 8),
-                      Text("Exit Group"),
-                    ],
-                  ),
-                ),
-            ],
-            child: const Icon(Icons.more_vert),
-          ),
+                IconButton(
+                    onPressed: () {
+                      // _openFilePicker(receiver);
+                    },
+                    icon: Icon(Icons.image)),
+                IconButton(
+                    onPressed: () {
+                      // _sendMessage(receiver: receiver);
+                    },
+                    icon: Icon(Icons.send))
+              ],
+            ),
+          )
         ],
       ),
     );
