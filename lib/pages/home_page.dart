@@ -175,7 +175,25 @@ class _HomePageState extends State<HomePage> {
                     itemCount: value.getJoinedGroups.length,
                     itemBuilder: (context, index) {
                       return ListTile(
-                        title: Text(value.getJoinedGroups[index].groupName),
+                        onTap: () {
+                          Navigator.pushNamed(context, "/group_chat",
+                              arguments: value.getJoinedGroups[index]);
+                        },
+                        leading: CircleAvatar(
+                          backgroundImage: value.getJoinedGroups[index].image ==
+                                      "" ||
+                                  value.getJoinedGroups[index].image == null
+                              ? Image(
+                                  image: AssetImage("assets/user.png"),
+                                ).image
+                              : CachedNetworkImageProvider(
+                                  "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${value.getJoinedGroups[index].image}/view?project=67b7e512000635cad2ad&mode=admin"),
+                        ),
+                        title: Text(
+                          value.getJoinedGroups[index].groupName,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
                       );
                     },
                   );

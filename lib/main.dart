@@ -198,6 +198,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:livecom/controllers/notification_controller.dart';
 import 'package:livecom/pages/create_or_update_page.dart';
+import 'package:livecom/pages/group_chat_page.dart';
 import 'package:livecom/providers/group_message_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:livecom/controllers/appwrite_controllers.dart';
@@ -322,7 +323,8 @@ class MyApp extends StatelessWidget {
           "/profile": (context) => ProfilePage(),
           "/update": (context) => UpadteProfilePage(),
           "/search_user": (context) => SearchUserPage(),
-          "/modify_group": (context) => CreateOrUpdateGroup()
+          "/modify_group": (context) => CreateOrUpdateGroup(),
+          "/group_chat": (context) => GroupChatPage(),
         },
       ),
     );
