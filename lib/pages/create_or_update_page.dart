@@ -99,6 +99,10 @@ class _CreateOrUpdateGroupState extends State<CreateOrUpdateGroup> {
     GroupModel? existingData =
         ModalRoute.of(context)?.settings.arguments as GroupModel?;
 
+    if (existingData != null) {
+      _groupNameController.text = existingData.groupName ?? "";
+      _groupDescController.text = existingData.groupDesc ?? "";
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(existingData != null ? "Update Group" : "Create Group"),
@@ -120,17 +124,16 @@ class _CreateOrUpdateGroupState extends State<CreateOrUpdateGroup> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: GestureDetector(
-                    onTap: () => _openFilePicker(),
-                    child: Stack(
-                      children: [
-                        Container(
+                  child: Stack(
+                    children: [
+                      GestureDetector(
+                        onTap: () => _openFilePicker(),
+                        child: Container(
                           height: 200,
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: secondary_color,
-                            shape:
-                                BoxShape.circle, // Makes the container circular
+                            shape: BoxShape.circle,
                           ),
                           child: _filePickerResult != null
                               ? ClipOval(
@@ -148,7 +151,7 @@ class _CreateOrUpdateGroupState extends State<CreateOrUpdateGroup> {
                                   ? ClipOval(
                                       child: Image(
                                         image: CachedNetworkImageProvider(
-                                            "https://cloud.appwrite.io/v1/storage/buckets/662faabe001a20bb87c6/files/${existingData.image}/view?project=662e8e5c002f2d77a17c&mode=admin"),
+                                            "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${existingData.image}/view?project=67b7e512000635cad2ad&mode=admin"),
                                         fit: BoxFit.cover,
                                         width: 100,
                                         height: 100,
@@ -156,16 +159,18 @@ class _CreateOrUpdateGroupState extends State<CreateOrUpdateGroup> {
                                     )
                                   : null,
                         ),
-                        Positioned(
-                          bottom: 0,
-                          right: 100,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 100,
+                        child: GestureDetector(
+                          onTap: () =>
+                              _openFilePicker(), // Ensuring tap works on the edit button
                           child: Container(
-                            padding: EdgeInsets.all(
-                                10), // Reduce padding for better alignment
+                            padding: EdgeInsets.all(10),
                             decoration: BoxDecoration(
                               color: primary_blue,
-                              shape:
-                                  BoxShape.circle, // Makes edit button circular
+                              shape: BoxShape.circle,
                             ),
                             child: Icon(
                               Icons.edit_rounded,
@@ -173,8 +178,8 @@ class _CreateOrUpdateGroupState extends State<CreateOrUpdateGroup> {
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 Container(
