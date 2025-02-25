@@ -8,6 +8,7 @@ import 'package:livecom/models/chat_data_model.dart';
 import 'package:livecom/models/user_model.dart';
 import 'package:livecom/pages/search_user_page.dart';
 import 'package:livecom/providers/chat_provider.dart';
+import 'package:livecom/providers/group_message_provider.dart';
 import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -27,6 +28,8 @@ class _HomePageState extends State<HomePage> {
     currentUserId =
         Provider.of<UserDataProvider>(context, listen: false).getUserId;
     Provider.of<ChatProvider>(context, listen: false).loadChats(currentUserId);
+    Provider.of<GroupMessageProvider>(context, listen: false)
+        .loadAllGroupData(currentUserId);
     PushNotifications.getDeviceToken();
     subscribeToRealtime(userId: currentUserId);
     super.initState();
@@ -163,9 +166,22 @@ class _HomePageState extends State<HomePage> {
                 }
               },
             ),
-            const Center(
-              child: Text("Groups"),
-            ),
+            Consumer<GroupMessageProvider>(
+              builder: (context, value, child) {
+                if (value.getJoinedGroups.isEmpty) {
+                  return Center(child: Text("No Group Joined"));
+                } else {
+                  return ListView.builder(
+                    itemCount: value.getJoinedGroups.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(value.getJoinedGroups[index].groupName),
+                      );
+                    },
+                  );
+                }
+              },
+            )
           ],
         ),
         floatingActionButton: FloatingActionButton(

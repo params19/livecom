@@ -197,6 +197,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:livecom/controllers/notification_controller.dart';
+import 'package:livecom/pages/create_or_update_page.dart';
+import 'package:livecom/providers/group_message_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:livecom/controllers/appwrite_controllers.dart';
 import 'package:livecom/controllers/local_saved_data.dart';
@@ -251,7 +253,6 @@ class LifecycleEventHandler extends WidgetsBindingObserver {
   }
 }
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -283,7 +284,8 @@ void main() async {
   });
 
   // Handle app launch from terminated state
-  final RemoteMessage? message = await FirebaseMessaging.instance.getInitialMessage();
+  final RemoteMessage? message =
+      await FirebaseMessaging.instance.getInitialMessage();
   if (message != null) {
     Future.delayed(Duration(seconds: 1), () {
       navigatorKey.currentState?.pushNamed("/home");
@@ -302,6 +304,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => UserDataProvider()),
         ChangeNotifierProvider(create: (context) => ChatProvider()),
+        ChangeNotifierProvider(create: (context) => GroupMessageProvider())
       ],
       child: MaterialApp(
         navigatorKey: navigatorKey,
@@ -319,6 +322,7 @@ class MyApp extends StatelessWidget {
           "/profile": (context) => ProfilePage(),
           "/update": (context) => UpadteProfilePage(),
           "/search_user": (context) => SearchUserPage(),
+          "/modify_group": (context) => CreateOrUpdateGroup()
         },
       ),
     );
@@ -342,7 +346,8 @@ class _CheckUserSessionState extends State<CheckUserSession> {
     });
 
     checkSessions().then((isLoggedIn) {
-      final userName = Provider.of<UserDataProvider>(context, listen: false).getUserName;
+      final userName =
+          Provider.of<UserDataProvider>(context, listen: false).getUserName;
 
       if (isLoggedIn) {
         Navigator.pushNamedAndRemoveUntil(

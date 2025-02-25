@@ -76,6 +76,12 @@ class _SearchUserPageState extends State<SearchUserPage> {
                 ),
               ),
               ListTile(
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    "/modify_group",
+                  );
+                },
                 leading: Icon(Icons.group_add_outlined),
                 title: Text("Create new group"),
                 trailing: Icon(
