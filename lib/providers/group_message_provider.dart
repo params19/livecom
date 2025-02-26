@@ -19,6 +19,8 @@ class GroupMessageProvider extends ChangeNotifier {
 
   loadAllGroupRequiredData(String userId) async {
     await loadAllGroupData(userId);
+    print("Joined Groups: ${_joinedGroups.length}"); // Check if it's empty
+    await readAllGroupMsg();
   }
 
   // read all the group , the current user is joined and then update it in provider
@@ -32,7 +34,7 @@ class GroupMessageProvider extends ChangeNotifier {
   }
 
   // read all the group messages where the user is present
-  readAllGroupMsg() {
+  readAllGroupMsg() async {
     List<String> groupIds = [];
     for (var group in _joinedGroups) {
       groupIds.add(group.groupId);

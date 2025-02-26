@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
         Provider.of<UserDataProvider>(context, listen: false).getUserId;
     Provider.of<ChatProvider>(context, listen: false).loadChats(currentUserId);
     Provider.of<GroupMessageProvider>(context, listen: false)
-        .loadAllGroupData(currentUserId);
+        .loadAllGroupRequiredData(currentUserId);
     PushNotifications.getDeviceToken();
     subscribeToRealtime(userId: currentUserId);
     super.initState();
@@ -176,8 +176,12 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       return ListTile(
                         onTap: () {
-                          Navigator.pushNamed(context, "/group_chat",
-                              arguments: value.getJoinedGroups[index]);
+                          print("Group chat window");
+                          Navigator.pushNamed(
+                            context,
+                            "/group_chat",
+                            arguments: value.getJoinedGroups[index],
+                          );
                         },
                         leading: CircleAvatar(
                           backgroundImage: value.getJoinedGroups[index].image ==
