@@ -8,6 +8,7 @@ import 'package:livecom/models/group_message_model.dart';
 import 'package:livecom/models/message_model.dart';
 import 'package:livecom/models/user_model.dart';
 import 'package:livecom/providers/chat_provider.dart';
+import 'package:livecom/providers/group_message_provider.dart';
 import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -666,4 +667,36 @@ Future<bool> exitGroup(
     print("Error on leaving group :$e");
     return false;
   }
+}
+
+// to subscribe to realtime changes
+subscribeToRealtimeGroupMsg({required String userId}) {
+  subscription = realtime.subscribe([
+    "databases.$db.collections.$groupCollection.documents",
+    "databases.$db.collections.$groupMessageCollection.documents"
+  ]);
+
+  print("Subscribing to realtime");
+
+  subscription!.stream.listen((data) {
+    print("Some event happend");
+    // print(data.events);
+    // print(data.payload);
+    final firstItem = data.events[0].split(".");
+    final eventType = firstItem[firstItem.length - 1];
+    print("event type is $eventType");
+    if (eventType == "create") {
+      Provider.of<GroupMessageProvider>(navigatorKey.currentState!.context,
+              listen: false)
+          .loadAllGroupRequiredData(userId);
+    } else if (eventType == "update") {
+   Provider.of<GroupMessageProvider>(navigatorKey.currentState!.context,
+              listen: false)
+          .loadAllGroupRequiredData(userId);
+    } else if (eventType == "delete") {
+     Provider.of<GroupMessageProvider>(navigatorKey.currentState!.context,
+              listen: false)
+          .loadAllGroupRequiredData(userId);
+    }
+  });
 }

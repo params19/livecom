@@ -32,6 +32,7 @@ class _HomePageState extends State<HomePage> {
         .loadAllGroupRequiredData(currentUserId);
     PushNotifications.getDeviceToken();
     subscribeToRealtime(userId: currentUserId);
+    subscribeToRealtimeGroupMsg(userId: currentUserId);
     super.initState();
   }
 
