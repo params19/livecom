@@ -79,6 +79,7 @@ class _ChatPageState extends State<ChatPage> {
                 if (value) {
                   Provider.of<ChatProvider>(context, listen: false).addMessage(
                       MessageModel(
+                        isGroupInvite: false,
                         message: imageId,
                         sender: currentUserId,
                         receiver: receiver.userId,
@@ -117,6 +118,7 @@ class _ChatPageState extends State<ChatPage> {
           if (value) {
             Provider.of<ChatProvider>(context, listen: false).addMessage(
                 MessageModel(
+                  isGroupInvite: false,
                   message: messageController.text,
                   sender: currentUserId,
                   receiver: receiver.userId,

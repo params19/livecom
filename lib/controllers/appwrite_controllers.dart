@@ -307,6 +307,7 @@ Future createNewChat(
           "isSeenbyReceiver": false,
           "isImage": isImage,
           "userData": [senderId, receiverId],
+          "isGroupInvite": isGroupInvite
         });
 
     print("Message Send !");
@@ -637,8 +638,8 @@ Future<Map<String, List<GroupMessageModel>>?> readGroupMessages(
   }
 }
 
-// to exit the specific group
-Future<bool> exitGroup(
+// to add the user to the specific group
+Future<bool> addUserToGroup(
     {required String groupId, required String currentUser}) async {
   try {
     //  read the group members first
@@ -652,8 +653,8 @@ Future<bool> exitGroup(
 
     List existingMembers = result.data["members"];
 
-    if (existingMembers.contains(currentUser)) {
-      existingMembers.remove(currentUser);
+    if (!existingMembers.contains(currentUser)) {
+      existingMembers.add(currentUser);
     }
 
     //  update the document of the specific group
@@ -664,7 +665,7 @@ Future<bool> exitGroup(
         data: {"members": existingMembers, "userData": existingMembers});
     return true;
   } catch (e) {
-    print("Error on leaving group :$e");
+    print("Error on joining group :$e");
     return false;
   }
 }
@@ -690,11 +691,11 @@ subscribeToRealtimeGroupMsg({required String userId}) {
               listen: false)
           .loadAllGroupRequiredData(userId);
     } else if (eventType == "update") {
-   Provider.of<GroupMessageProvider>(navigatorKey.currentState!.context,
+      Provider.of<GroupMessageProvider>(navigatorKey.currentState!.context,
               listen: false)
           .loadAllGroupRequiredData(userId);
     } else if (eventType == "delete") {
-     Provider.of<GroupMessageProvider>(navigatorKey.currentState!.context,
+      Provider.of<GroupMessageProvider>(navigatorKey.currentState!.context,
               listen: false)
           .loadAllGroupRequiredData(userId);
     }

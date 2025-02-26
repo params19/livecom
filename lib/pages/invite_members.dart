@@ -111,11 +111,11 @@ class _InviteMembersState extends State<InviteMembers> {
                         backgroundImage: user.data["profilePic"] != null &&
                                 user.data["profilePic"] != ""
                             ? NetworkImage(
-                                "https://cloud.appwrite.io/v1/storage/buckets/662faabe001a20bb87c6/files/${user.data["profile_pic"]}/view?project=662e8e5c002f2d77a17c&mode=admin")
+                                "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${user.data["profilePic"]}/view?project=67b7e512000635cad2ad&mode=admin")
                             : Image(image: AssetImage("assets/user.png")).image,
                       ),
                       title: Text(user.data["name"] ?? "No Name"),
-                      subtitle: Text(user.data["phoneNo"] ?? ""),
+                      subtitle: Text(user.data["phone"] ?? ""),
                       trailing: Icon(
                         isSelected ? Icons.check_circle : Icons.circle_outlined,
                         color: isSelected ? Colors.green : Colors.grey,
@@ -131,7 +131,7 @@ class _InviteMembersState extends State<InviteMembers> {
             child: Container(
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                    color: primary_blue, borderRadius: BorderRadius.circular(6)),
+                    color: primary_blue, borderRadius: BorderRadius.circular(10)),
                 child: Text(
                   "Add ${selectedUserIds.length} member${selectedUserIds.length > 1 ? "s" : ""}",
                   style: TextStyle(color: Colors.white),

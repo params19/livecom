@@ -143,15 +143,6 @@ class _GroupChatPageState extends State<GroupChatPage> {
     }
   }
   
-
-  // void _sendMessage({required String groupId, required String message, required String senderId, bool? isImage}) async{
-  //   if(_messageController.text.isNotEmpty){
-  //     setState(() {
-        
-  //     });
-  //   }
-  //   }
-  // }
   @override
   Widget build(BuildContext context) {
     final GroupModel group =
@@ -206,7 +197,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
                 if (group.isPublic || group.admin == currentUser)
                   PopupMenuItem<String>(
                       onTap: () => Navigator.pushNamed(
-                          context, "/invite_members",
+                          context, "/invite_page",
                           arguments: group),
                       child: Row(
                         children: [
