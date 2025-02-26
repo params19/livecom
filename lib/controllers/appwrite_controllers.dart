@@ -628,9 +628,7 @@ Future<Map<String, List<GroupMessageModel>>?> readGroupMessages(
         chats[key]!.add(message);
       }
     }
-
     print("Loaded chats ${chats.length}");
-
     return chats;
   } catch (e) {
     print("Error in reading group chat messages :$e");
@@ -665,7 +663,7 @@ Future<bool> addUserToGroup(
         data: {"members": existingMembers, "userData": existingMembers});
     return true;
   } catch (e) {
-    print("Error on joining group :$e");
+    print("Error on Joining Group :$e");
     return false;
   }
 }
@@ -681,8 +679,6 @@ subscribeToRealtimeGroupMsg({required String userId}) {
 
   subscription!.stream.listen((data) {
     print("Some event happend");
-    // print(data.events);
-    // print(data.payload);
     final firstItem = data.events[0].split(".");
     final eventType = firstItem[firstItem.length - 1];
     print("event type is $eventType");
@@ -700,4 +696,36 @@ subscribeToRealtimeGroupMsg({required String userId}) {
           .loadAllGroupRequiredData(userId);
     }
   });
+}
+
+// to exit the specific group
+Future<bool> exitGroup(
+    {required String groupId, required String currentUser}) async {
+  try {
+    //  read the group members first
+    final result = await database.getDocument(
+        databaseId: db,
+        collectionId: groupCollection,
+        documentId: groupId,
+        queries: [
+          Query.select(["members"])
+        ]);
+
+    List existingMembers = result.data["members"];
+
+    if (existingMembers.contains(currentUser)) {
+      existingMembers.remove(currentUser);
+    }
+
+    //  update the document of the specific group
+    await database.updateDocument(
+        databaseId: db,
+        collectionId: groupCollection,
+        documentId: groupId,
+        data: {"members": existingMembers, "userData": existingMembers});
+    return true;
+  } catch (e) {
+    print("Error on Leaving Group :$e");
+    return false;
+  }
 }
