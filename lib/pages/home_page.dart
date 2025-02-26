@@ -136,8 +136,9 @@ class _HomePageState extends State<HomePage> {
                         ),
                         title: Text(otherUser.name ?? "Unknown"),
                         subtitle: Text(
-                          "${chatData[totalChats - 1].message.sender == currentUserId ? "You: " : ""}"
-                          "${chatData[totalChats - 1].message.isImage! ? "Sent an image" : chatData[totalChats - 1].message.message}",
+                           chatData[totalChats - 1].message.isGroupInvite == true
+                              ? "${chatData[totalChats - 1].message.sender == currentUserId ? "You sent a group invite " : "Receive a group invite"}"
+                              : "${chatData[totalChats - 1].message.sender == currentUserId ? "You : " : ""}${chatData[totalChats - 1].message.isImage == true ? "Sent an image" : chatData[totalChats - 1].message.message}",
                           overflow: TextOverflow.ellipsis,
                         ),
                         trailing: Column(

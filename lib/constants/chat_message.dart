@@ -134,7 +134,7 @@ class _ChatMessageState extends State<ChatMessage> {
                                   style: TextStyle(
                                       color: widget.message.sender ==
                                               widget.currentUserId
-                                          ? Colors.blue
+                                          ? primary_blue
                                           : Colors.white),
                                 )),
                             if (widget.message.sender != widget.currentUserId)

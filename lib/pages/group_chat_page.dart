@@ -222,17 +222,30 @@ class _GroupChatPageState extends State<GroupChatPage> {
                       )),
                 if (group.admin != currentUser)
                   PopupMenuItem<String>(
-                    enabled: false, // This makes the item non-clickable
-                    child: Row(
-                      children: [
-                        Icon(Icons.exit_to_app,
-                            color: Colors.grey), // Indicate it's disabled
-                        SizedBox(width: 8),
-                        Text("Exit Group",
-                            style: TextStyle(color: Colors.grey)),
-                      ],
-                    ),
-                  ),
+                      onTap: () async {
+                        await exitGroup(
+                                groupId: group.groupId,
+                                currentUser: currentUser)
+                            .then((value) {
+                          if (value) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text("Group Left Successfully.")));
+                            Navigator.pop(context);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text("Failed to exit group.")));
+                          }
+                        });
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.exit_to_app),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Text("Exit Group")
+                        ],
+                      )),
               ],
               child: Icon(Icons.more_vert),
             )
