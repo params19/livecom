@@ -1,7 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:livecom/constants/color.dart';
 import 'package:livecom/constants/memberCalculate.dart';
 import 'package:livecom/models/groups_model.dart';
@@ -18,7 +16,9 @@ class _GroupDetailsState extends State<GroupDetails> {
   Widget build(BuildContext context) {
     final GroupModel groupData =
         ModalRoute.of(context)!.settings.arguments as GroupModel;
+
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: background_color,
         leadingWidth: 40,
@@ -27,16 +27,15 @@ class _GroupDetailsState extends State<GroupDetails> {
         title: Row(
           children: [
             CircleAvatar(
-              backgroundImage: groupData.image == "" || groupData.image == null
-                  ? Image(
-                      image: AssetImage("assets/user.png"),
-                    ).image
-                  : CachedNetworkImageProvider(
-                      "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${groupData.image}/view?project=67b7e512000635cad2ad&mode=admin"),
+              radius: 22,
+              backgroundImage:
+                  groupData.image == null || groupData.image!.isEmpty
+                      ? AssetImage("assets/user.png")
+                      : CachedNetworkImageProvider(
+                          "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${groupData.image}/view?project=67b7e512000635cad2ad&mode=admin",
+                        ) as ImageProvider,
             ),
-            SizedBox(
-              width: 10,
-            ),
+            SizedBox(width: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -46,9 +45,7 @@ class _GroupDetailsState extends State<GroupDetails> {
                 ),
                 Text(
                   memCal(groupData.members.length),
-                  style: TextStyle(
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -56,50 +53,76 @@ class _GroupDetailsState extends State<GroupDetails> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildSectionTitle("Description :"),
             Text(
-              "Description :",
-              style: TextStyle(fontWeight: FontWeight.w600),
+              groupData.groupDesc?.isNotEmpty == true
+                  ? groupData.groupDesc!
+                  : "No description available",
+              style: TextStyle(fontSize: 16, color: Colors.black87),
             ),
-            SizedBox(
-              height: 4,
-            ),
-            Text(groupData.groupDesc ?? ""),
-            SizedBox(
-              height: 4,
-            ),
+            SizedBox(height: 12),
             Divider(),
-            SizedBox(
-              height: 8,
+            _buildSectionTitle("Members :"),
+            Expanded(
+              child: ListView.builder(
+                itemCount: groupData.userData.length,
+                itemBuilder: (context, index) {
+                  var e = groupData.userData[index];
+                  return _buildMemberCard(
+                    name: e.name ?? "No Name",
+                    role: e.userId == groupData.admin ? "Admin" : "Member",
+                    profilePic: e.profilePic,
+                  );
+                },
+              ),
             ),
-            Text(
-              "Members :",
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-            Column(
-              children: groupData.userData
-                  .map((e) => Card(
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: e.profilePic == "" ||
-                                    e.profilePic == null
-                                ? Image(
-                                    image: AssetImage("assets/user.png"),
-                                  ).image
-                                : CachedNetworkImageProvider(
-                                    "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${e.profilePic}/view?project=67b7e512000635cad2ad&mode=admin"),
-                          ),
-                          title: Text(e.name ?? "No Name"),
-                          subtitle: Text(
-                              e.userId == groupData.admin ? "Admin" : "Member"),
-                        ),
-                      ))
-                  .toList(),
-            )
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMemberCard(
+      {required String name, required String role, String? profilePic}) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 3,
+      child: ListTile(
+        contentPadding: EdgeInsets.all(12),
+        leading: CircleAvatar(
+          radius: 28,
+          backgroundImage: profilePic == null || profilePic.isEmpty
+              ? AssetImage("assets/user.png")
+              : CachedNetworkImageProvider(
+                  "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/$profilePic/view?project=67b7e512000635cad2ad&mode=admin",
+                ) as ImageProvider,
+        ),
+        title: Text(
+          name,
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+        ),
+        subtitle: Text(
+          role,
+          style: TextStyle(color: Colors.grey[700]),
         ),
       ),
     );

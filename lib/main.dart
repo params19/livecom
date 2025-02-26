@@ -199,6 +199,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:livecom/controllers/notification_controller.dart';
 import 'package:livecom/pages/create_or_update_page.dart';
 import 'package:livecom/pages/group_chat_page.dart';
+import 'package:livecom/pages/group_details.dart';
 import 'package:livecom/pages/invite_members.dart';
 import 'package:livecom/providers/group_message_provider.dart';
 import 'package:provider/provider.dart';
@@ -327,6 +328,7 @@ class MyApp extends StatelessWidget {
           "/modify_group": (context) => CreateOrUpdateGroup(),
           "/group_chat": (context) => GroupChatPage(),
           "/invite_page": (context) => InviteMembers(),
+          "/group_details": (context) => GroupDetails(),
         },
       ),
     );

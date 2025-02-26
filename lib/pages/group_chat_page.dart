@@ -163,33 +163,38 @@ class _GroupChatPageState extends State<GroupChatPage> {
               );
             },
           ),
-          title: Row(
-            children: [
-              CircleAvatar(
-                backgroundImage: group.image == null || group.image == ""
-                    ? const AssetImage("assets/user.png") as ImageProvider
-                    : CachedNetworkImageProvider(
-                        "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${group.image}/view?project=67b7e512000635cad2ad&mode=admin",
+          title: GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, "/group_details", arguments: group);
+            },
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundImage: group.image == null || group.image == ""
+                      ? const AssetImage("assets/user.png") as ImageProvider
+                      : CachedNetworkImageProvider(
+                          "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${group.image}/view?project=67b7e512000635cad2ad&mode=admin",
+                        ),
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      group.groupName,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
                       ),
-              ),
-              const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    group.groupName,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
                     ),
-                  ),
-                  Text(
-                    memCal(group.members.length),
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ],
-              ),
-            ],
+                    Text(
+                      memCal(group.members.length),
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
           actions: [
             PopupMenuButton<String>(
