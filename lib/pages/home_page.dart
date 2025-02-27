@@ -97,6 +97,10 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       List<ChatDataModel> chatData =
                           value.getAllChats[otherUsers[index]]!;
+
+                      if (chatData.isEmpty) {
+                        return SizedBox.shrink();
+                      }
                       int totalChats = chatData.length;
                       UserData otherUser =
                           chatData[0].users[0].userId == currentUserId

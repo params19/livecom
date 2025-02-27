@@ -761,3 +761,29 @@ Future<void> updateLastMessageSeen(
   lastSeenMessages[groupId] = lastMessageSeenId;
   await LocalSavedData().saveLastSeenMessages(lastSeenMessages);
 }
+
+// send notifications to multiple users at once
+Future sendMultipleNotificationtoOtherUser({
+  required String notificationTitle,
+  required String notificationBody,
+  required List<String> deviceToken,
+}) async {
+  try {
+    print("Sending Notification");
+    final Map<String, dynamic> body = {
+      "deviceToken": deviceToken,
+      "message": {"title": notificationTitle, "body": notificationBody},
+    };
+
+    final response = await http.post(
+        Uri.parse("https://67bca59d4c806ce9da08.appwrite.global/many"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(body));
+
+    if (response.statusCode == 200) {
+      print("Notification send to other user");
+    }
+  } catch (e) {
+    print("Notification cannot be sent");
+  }
+}
