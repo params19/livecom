@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:livecom/main.dart';
 import 'package:livecom/models/chat_data_model.dart';
 import 'package:livecom/models/group_message_model.dart';
@@ -13,18 +14,17 @@ import 'package:livecom/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
-const String db = "67b7e7d800060607c3e4";
-const String userCollection = "67b7e7e2003adb6ed544";
-const String storageBucket = "67b7f7a000142a335f4e";
-const String chat_collection = "67b89a320017cbd53479";
-const String groupCollection = "67bd4729000f69af4142";
-const String groupMessageCollection = "67bd48dd0007b2eec3ea";
+final String db = dotenv.env['DB'] ?? "";
+final String userCollection = dotenv.env['USER_COLLECTION'] ?? "";
+final String storageBucket = dotenv.env['STORAGE_BUCKET'] ?? "";
+final String chat_collection = dotenv.env['CHAT_COLLECTION'] ?? "";
+final String groupCollection = dotenv.env['GROUP_COLLECTION'] ?? "";
+final String groupMessageCollection = dotenv.env['GROUP_MESSAGE_COLLECTION'] ?? "";
 
 Client client = Client()
   ..setEndpoint("https://cloud.appwrite.io/v1")
-  ..setProject('67b7e512000635cad2ad')
+  ..setProject(dotenv.env['PROJECT_ID'] ?? "")
   ..setSelfSigned(status: true);
-
 // ✅ Use client for services
 Account account = Account(client);
 final Databases database = Databases(client);

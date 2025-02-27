@@ -196,6 +196,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:livecom/controllers/notification_controller.dart';
 import 'package:livecom/pages/create_or_update_page.dart';
 import 'package:livecom/pages/group_chat_page.dart';
@@ -257,6 +258,7 @@ class LifecycleEventHandler extends WidgetsBindingObserver {
 }
 
 void main() async {
+  await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await LocalSavedData.init();
