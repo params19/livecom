@@ -787,3 +787,19 @@ Future sendMultipleNotificationtoOtherUser({
     print("Notification cannot be sent");
   }
 }
+
+// list all public groups
+Future<List<Document>> getChannels() async {
+  try {
+    final results = await database
+        .listDocuments(databaseId: db, collectionId: groupCollection, queries: [
+      Query.equal("isPublic", true),
+    ]);
+    print("Result got");
+    print(results.documents.length);
+    return results.documents;
+  } catch (e) {
+    print("Error in getting channels $e");
+    return [];
+  }
+}

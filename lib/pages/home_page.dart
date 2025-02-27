@@ -22,10 +22,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late String currentUserId = "";
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
-    // TODO: implement initState
+    super.initState();
     currentUserId =
         Provider.of<UserDataProvider>(context, listen: false).getUserId;
     Provider.of<ChatProvider>(context, listen: false).loadChats(currentUserId);
@@ -34,7 +35,10 @@ class _HomePageState extends State<HomePage> {
     PushNotifications.getDeviceToken();
     subscribeToRealtime(userId: currentUserId);
     subscribeToRealtimeGroupMsg(userId: currentUserId);
-    super.initState();
+  }
+
+  void _handleSearch() {
+    // Implement search functionality here
   }
 
   @override
@@ -42,6 +46,7 @@ class _HomePageState extends State<HomePage> {
     Provider.of<GroupMessageProvider>(context, listen: false)
         .loadAllGroupData(currentUserId);
     updateOnlineStatus(status: true, userId: currentUserId);
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -71,13 +76,9 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
           bottom: TabBar(
-            tabs: [
-              Tab(
-                text: "Direct Messages",
-              ),
-              Tab(
-                text: "Groups",
-              ),
+            tabs: const [
+              Tab(text: "Direct Messages"),
+              Tab(text: "Groups"),
             ],
           ),
         ),
@@ -99,7 +100,7 @@ class _HomePageState extends State<HomePage> {
                           value.getAllChats[otherUsers[index]]!;
 
                       if (chatData.isEmpty) {
-                        return SizedBox.shrink();
+                        return const SizedBox.shrink();
                       }
                       int totalChats = chatData.length;
                       UserData otherUser =
@@ -178,100 +179,120 @@ class _HomePageState extends State<HomePage> {
             Consumer<GroupMessageProvider>(
               builder: (context, value, child) {
                 if (value.getJoinedGroups.isEmpty) {
-                  return Center(child: Text("No Group Joined"));
+                  return const Center(child: Text("No Group Joined"));
                 } else {
-                  return ListView.builder(
-                    itemCount: value.getJoinedGroups.length,
-                    itemBuilder: (context, index) {
-                      String groupId = value.getJoinedGroups[index].groupId;
-                      List<GroupMessageModel> messages =
-                          value.getGroupMessages[groupId] ?? [];
-                      GroupMessageModel? lastMessage =
-                          messages != null && messages.isNotEmpty
-                              ? messages.last
-                              : null;
-
-                      return ListTile(
+                  return Column(
+                    children: [
+                      ListTile(
                         onTap: () {
-                          print("Group chat window");
-                          Navigator.pushNamed(
-                            context,
-                            "/group_chat",
-                            arguments: value.getJoinedGroups[index],
-                          );
+                          Navigator.pushNamed(context, "/explore_channels");
                         },
-                        leading: CircleAvatar(
-                          backgroundImage: value.getJoinedGroups[index].image ==
-                                      "" ||
-                                  value.getJoinedGroups[index].image == null
-                              ? Image(
-                                  image: AssetImage("assets/user.png"),
-                                ).image
-                              : CachedNetworkImageProvider(
-                                  "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${value.getJoinedGroups[index].image}/view?project=67b7e512000635cad2ad&mode=admin"),
+                        leading: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 6.0), // Add space here
+                          child: const Icon(Icons.groups_outlined),
                         ),
-                        title: Text(
-                          value.getJoinedGroups[index].groupName,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
+                        title: const Text("Explore Channels",
+                            style: TextStyle(fontWeight: FontWeight.w500)),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.black54,
+                          textDirection: TextDirection.ltr,
+                          size: 18,
                         ),
-                        subtitle: Text(
-                          lastMessage == null
-                              ? "No Message"
-                              : "${lastMessage!.senderId == currentUserId ? "You : " : "${lastMessage.userData[0].name ?? "No Name"} : "}${lastMessage.isImage == true ? "Sent an image" : lastMessage.message}",
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            FutureBuilder(
-                              future: calculateUnreadMessages(
-                                  groupId, messages ?? []),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return SizedBox();
-                                } else if (snapshot.hasError) {
-                                  return SizedBox();
-                                } else {
-                                  int unreadMsgCount = snapshot.data ?? 0;
-                                  return unreadMsgCount == 0
-                                      ? SizedBox()
-                                      : CircleAvatar(
-                                          backgroundColor: primary_blue,
-                                          radius: 10,
-                                          child: Text(
-                                            "$unreadMsgCount",
-                                            style: TextStyle(
-                                                fontSize: 11,
-                                                color: Colors.white),
-                                          ),
-                                        );
-                                }
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: value.getJoinedGroups.length,
+                          itemBuilder: (context, index) {
+                            String groupId =
+                                value.getJoinedGroups[index].groupId;
+                            List<GroupMessageModel> messages =
+                                value.getGroupMessages[groupId] ?? [];
+                            GroupMessageModel? lastMessage =
+                                messages.isNotEmpty ? messages.last : null;
+
+                            return ListTile(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  "/group_chat",
+                                  arguments: value.getJoinedGroups[index],
+                                );
                               },
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            lastMessage == null
-                                ? SizedBox()
-                                : Text(formatDate(lastMessage.timestamp))
-                          ],
+                              leading: CircleAvatar(
+                                backgroundImage: value
+                                                .getJoinedGroups[index].image ==
+                                            "" ||
+                                        value.getJoinedGroups[index].image ==
+                                            null
+                                    ? const AssetImage("assets/user.png")
+                                    : CachedNetworkImageProvider(
+                                        "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${value.getJoinedGroups[index].image}/view?project=67b7e512000635cad2ad&mode=admin"),
+                              ),
+                              title: Text(
+                                value.getJoinedGroups[index].groupName,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 18),
+                              ),
+                              subtitle: Text(
+                                lastMessage == null
+                                    ? "No Message"
+                                    : "${lastMessage.senderId == currentUserId ? "You : " : "${lastMessage.userData[0].name ?? "No Name"} : "}${lastMessage.isImage == true ? "Sent an image" : lastMessage.message}",
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              trailing: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  FutureBuilder(
+                                    future: calculateUnreadMessages(
+                                        groupId, messages),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const SizedBox();
+                                      } else if (snapshot.hasError) {
+                                        return const SizedBox();
+                                      } else {
+                                        int unreadMsgCount = snapshot.data ?? 0;
+                                        return unreadMsgCount == 0
+                                            ? const SizedBox()
+                                            : CircleAvatar(
+                                                backgroundColor: primary_blue,
+                                                radius: 10,
+                                                child: Text(
+                                                  "$unreadMsgCount",
+                                                  style: const TextStyle(
+                                                      fontSize: 11,
+                                                      color: Colors.white),
+                                                ),
+                                              );
+                                      }
+                                    },
+                                  ),
+                                  const SizedBox(height: 8),
+                                  lastMessage == null
+                                      ? const SizedBox()
+                                      : Text(formatDate(lastMessage.timestamp))
+                                ],
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
+                      ),
+                    ],
                   );
                 }
               },
-            )
+            ),
           ],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SearchUserPage()),
+              MaterialPageRoute(builder: (context) => const SearchUserPage()),
             );
           },
           child: const Icon(Icons.chat),

@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:livecom/controllers/notification_controller.dart';
 import 'package:livecom/pages/create_or_update_page.dart';
+import 'package:livecom/pages/explore_channels.dart';
 import 'package:livecom/pages/group_chat_page.dart';
 import 'package:livecom/pages/group_details.dart';
 import 'package:livecom/pages/invite_members.dart';
@@ -138,6 +139,7 @@ class MyApp extends StatelessWidget {
           "/group_chat": (context) => GroupChatPage(),
           "/invite_page": (context) => InviteMembers(),
           "/group_details": (context) => GroupDetails(),
+          "/explore_channels": (context) => ExploreChannels(),
         },
       ),
     );
