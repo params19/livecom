@@ -20,7 +20,8 @@ final String userCollection = dotenv.env['USER_COLLECTION'] ?? "";
 final String storageBucket = dotenv.env['STORAGE_BUCKET'] ?? "";
 final String chat_collection = dotenv.env['CHAT_COLLECTION'] ?? "";
 final String groupCollection = dotenv.env['GROUP_COLLECTION'] ?? "";
-final String groupMessageCollection = dotenv.env['GROUP_MESSAGE_COLLECTION'] ?? "";
+final String groupMessageCollection =
+    dotenv.env['GROUP_MESSAGE_COLLECTION'] ?? "";
 
 Client client = Client()
   ..setEndpoint("https://cloud.appwrite.io/v1")
@@ -731,20 +732,32 @@ Future<bool> exitGroup(
   }
 }
 
-
 // calculate the no of last unreadMessages
-  Future<int> calculateUnreadMessages(String groupId, List<GroupMessageModel> groupMessages) async {
-  Map<String, String> lastSeenMessages = await LocalSavedData(). getLastSeenMessages();
+Future<int> calculateUnreadMessages(
+    String groupId, List<GroupMessageModel> groupMessages) async {
+  Map<String, String> lastSeenMessages =
+      await LocalSavedData().getLastSeenMessages();
   String? lastSeenMessageId = lastSeenMessages[groupId];
 
   if (lastSeenMessageId == null) {
-    return groupMessages.length; 
+    return groupMessages.length;
   }
 
-  int unreadCount = groupMessages.indexWhere((message) => message.messageId == lastSeenMessageId);
+  int unreadCount = groupMessages
+      .indexWhere((message) => message.messageId == lastSeenMessageId);
   if (unreadCount == -1) {
-    return groupMessages.length; 
+    return groupMessages.length;
   }
 
-  return groupMessages.length - unreadCount - 1; 
+  return groupMessages.length - unreadCount - 1;
+}
+
+// save last message seen in the group
+Future<void> updateLastMessageSeen(
+    String groupId, String lastMessageSeenId) async {
+  Map<String, String> lastSeenMessages =
+      await LocalSavedData().getLastSeenMessages();
+  print("Last Seen messages: $lastSeenMessages");
+  lastSeenMessages[groupId] = lastMessageSeenId;
+  await LocalSavedData().saveLastSeenMessages(lastSeenMessages);
 }

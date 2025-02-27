@@ -39,6 +39,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<GroupMessageProvider>(context, listen: false)
+        .loadAllGroupData(currentUserId);
     updateOnlineStatus(status: true, userId: currentUserId);
     return DefaultTabController(
       length: 2,
@@ -216,42 +218,43 @@ class _HomePageState extends State<HomePage> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         trailing: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                FutureBuilder(
-                                  future: calculateUnreadMessages(
-                                      groupId, messages ?? []),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return SizedBox();
-                                    } else if (snapshot.hasError) {
-                                      return SizedBox();
-                                    } else {
-                                      int unreadMsgCount = snapshot.data ?? 0;
-                                      return unreadMsgCount == 0
-                                          ? SizedBox()
-                                          : CircleAvatar(
-                                              backgroundColor: primary_blue,
-                                              radius: 10,
-                                              child: Text(
-                                                "$unreadMsgCount",
-                                                style: TextStyle(
-                                                    fontSize: 11,
-                                                    color: Colors.white),
-                                              ),
-                                            );
-                                    }
-                                  },
-                                ),
-                                SizedBox(
-                                  height: 8,
-                                ),
-                                lastMessage==null?SizedBox():
-                                Text(formatDate(lastMessage.timestamp))
-                              ],
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            FutureBuilder(
+                              future: calculateUnreadMessages(
+                                  groupId, messages ?? []),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return SizedBox();
+                                } else if (snapshot.hasError) {
+                                  return SizedBox();
+                                } else {
+                                  int unreadMsgCount = snapshot.data ?? 0;
+                                  return unreadMsgCount == 0
+                                      ? SizedBox()
+                                      : CircleAvatar(
+                                          backgroundColor: primary_blue,
+                                          radius: 10,
+                                          child: Text(
+                                            "$unreadMsgCount",
+                                            style: TextStyle(
+                                                fontSize: 11,
+                                                color: Colors.white),
+                                          ),
+                                        );
+                                }
+                              },
                             ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            lastMessage == null
+                                ? SizedBox()
+                                : Text(formatDate(lastMessage.timestamp))
+                          ],
+                        ),
                       );
                     },
                   );

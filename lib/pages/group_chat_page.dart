@@ -148,6 +148,8 @@ class _GroupChatPageState extends State<GroupChatPage> {
     final GroupModel group =
         ModalRoute.of(context)!.settings.arguments as GroupModel;
 
+    Provider.of<GroupMessageProvider>(context, listen: false).loadAllGroupData(
+        Provider.of<UserDataProvider>(context, listen: false).getUserId);
     return Scaffold(
         appBar: AppBar(
           backgroundColor: background_color,
@@ -272,7 +274,8 @@ class _GroupChatPageState extends State<GroupChatPage> {
                       .loadAllGroupData(
                           Provider.of<UserDataProvider>(context, listen: false)
                               .getUserId);
-
+                  updateLastMessageSeen(
+                      group.groupId, thisGroupMsg.last.messageId);
                   return ListView.builder(
                     reverse: true,
                     itemCount: reversedMsg.length,
