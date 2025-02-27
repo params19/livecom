@@ -181,6 +181,32 @@ class _HomePageState extends State<HomePage> {
                 if (value.getJoinedGroups.isEmpty) {
                   return const Center(child: Text("No Group Joined"));
                 } else {
+                  // Sort groups based on the timestamp of the latest message in each group
+                  value.getJoinedGroups.sort((a, b) {
+                    String groupIdA = a.groupId;
+                    String groupIdB = b.groupId;
+
+                    // Get the latest message for group A
+                    List<GroupMessageModel>? messagesA =
+                        value.getGroupMessages?[groupIdA];
+                    DateTime? latestTimestampA =
+                        messagesA != null && messagesA.isNotEmpty
+                            ? messagesA.last.timestamp
+                            : DateTime.fromMillisecondsSinceEpoch(
+                                0); // Default old date if no messages
+
+                    // Get the latest message for group B
+                    List<GroupMessageModel>? messagesB =
+                        value.getGroupMessages?[groupIdB];
+                    DateTime? latestTimestampB =
+                        messagesB != null && messagesB.isNotEmpty
+                            ? messagesB.last.timestamp
+                            : DateTime.fromMillisecondsSinceEpoch(
+                                0); // Default old date if no messages
+
+                    // Sort in descending order by timestamp
+                    return latestTimestampB.compareTo(latestTimestampA);
+                  });
                   return Column(
                     children: [
                       ListTile(

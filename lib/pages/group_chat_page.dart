@@ -265,12 +265,14 @@ class _GroupChatPageState extends State<GroupChatPage> {
                 // Reverse the list
                 List<GroupMessageModel> reversedMsg =
                     thisGroupMsg.reversed.toList();
+                if (thisGroupMsg.length > 0) {
+                  updateLastMessageSeen(
+                      group.groupId, thisGroupMsg.last.messageId);
+                }
                 Provider.of<GroupMessageProvider>(context, listen: false)
                     .loadAllGroupData(
                         Provider.of<UserDataProvider>(context, listen: false)
                             .getUserId);
-                updateLastMessageSeen(
-                    group.groupId, thisGroupMsg.last.messageId);
                 return ListView.builder(
                   reverse: true,
                   itemCount: reversedMsg.length,

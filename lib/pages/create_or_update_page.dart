@@ -23,7 +23,7 @@ class _CreateOrUpdateGroupState extends State<CreateOrUpdateGroup> {
   final _groupKey = GlobalKey<FormState>();
   final _groupNameController = TextEditingController();
   final _groupDescController = TextEditingController();
-  bool isPublic = true;
+  late bool isPublic = true;
 
   late String? imageId = "";
   late String userId = "";
@@ -102,6 +102,7 @@ class _CreateOrUpdateGroupState extends State<CreateOrUpdateGroup> {
     if (existingData != null) {
       _groupNameController.text = existingData.groupName ?? "";
       _groupDescController.text = existingData.groupDesc ?? "";
+      isPublic = existingData.isPublic ?? true; 
     }
     return Scaffold(
       appBar: AppBar(
