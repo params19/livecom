@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:livecom/controllers/local_saved_data.dart';
 import 'package:livecom/main.dart';
 import 'package:livecom/models/chat_data_model.dart';
 import 'package:livecom/models/group_message_model.dart';
@@ -728,4 +729,22 @@ Future<bool> exitGroup(
     print("Error on Leaving Group :$e");
     return false;
   }
+}
+
+
+// calculate the no of last unreadMessages
+  Future<int> calculateUnreadMessages(String groupId, List<GroupMessageModel> groupMessages) async {
+  Map<String, String> lastSeenMessages = await LocalSavedData(). getLastSeenMessages();
+  String? lastSeenMessageId = lastSeenMessages[groupId];
+
+  if (lastSeenMessageId == null) {
+    return groupMessages.length; 
+  }
+
+  int unreadCount = groupMessages.indexWhere((message) => message.messageId == lastSeenMessageId);
+  if (unreadCount == -1) {
+    return groupMessages.length; 
+  }
+
+  return groupMessages.length - unreadCount - 1; 
 }

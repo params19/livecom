@@ -5,6 +5,7 @@ import 'package:livecom/constants/date_format.dart';
 import 'package:livecom/controllers/appwrite_controllers.dart';
 import 'package:livecom/controllers/notification_controller.dart';
 import 'package:livecom/models/chat_data_model.dart';
+import 'package:livecom/models/group_message_model.dart';
 import 'package:livecom/models/user_model.dart';
 import 'package:livecom/pages/search_user_page.dart';
 import 'package:livecom/providers/chat_provider.dart';
@@ -136,7 +137,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         title: Text(otherUser.name ?? "Unknown"),
                         subtitle: Text(
-                           chatData[totalChats - 1].message.isGroupInvite == true
+                          chatData[totalChats - 1].message.isGroupInvite == true
                               ? "${chatData[totalChats - 1].message.sender == currentUserId ? "You sent a group invite " : "Receive a group invite"}"
                               : "${chatData[totalChats - 1].message.sender == currentUserId ? "You : " : ""}${chatData[totalChats - 1].message.isImage == true ? "Sent an image" : chatData[totalChats - 1].message.message}",
                           overflow: TextOverflow.ellipsis,
@@ -176,6 +177,14 @@ class _HomePageState extends State<HomePage> {
                   return ListView.builder(
                     itemCount: value.getJoinedGroups.length,
                     itemBuilder: (context, index) {
+                      String groupId = value.getJoinedGroups[index].groupId;
+                      List<GroupMessageModel> messages =
+                          value.getGroupMessages[groupId] ?? [];
+                      GroupMessageModel? lastMessage =
+                          messages != null && messages.isNotEmpty
+                              ? messages.last
+                              : null;
+
                       return ListTile(
                         onTap: () {
                           print("Group chat window");
@@ -200,6 +209,49 @@ class _HomePageState extends State<HomePage> {
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18),
                         ),
+                        subtitle: Text(
+                          lastMessage == null
+                              ? "No Message"
+                              : "${lastMessage!.senderId == currentUserId ? "You : " : "${lastMessage.userData[0].name ?? "No Name"} : "}${lastMessage.isImage == true ? "Sent an image" : lastMessage.message}",
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                FutureBuilder(
+                                  future: calculateUnreadMessages(
+                                      groupId, messages ?? []),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return SizedBox();
+                                    } else if (snapshot.hasError) {
+                                      return SizedBox();
+                                    } else {
+                                      int unreadMsgCount = snapshot.data ?? 0;
+                                      return unreadMsgCount == 0
+                                          ? SizedBox()
+                                          : CircleAvatar(
+                                              backgroundColor: primary_blue,
+                                              radius: 10,
+                                              child: Text(
+                                                "$unreadMsgCount",
+                                                style: TextStyle(
+                                                    fontSize: 11,
+                                                    color: Colors.white),
+                                              ),
+                                            );
+                                    }
+                                  },
+                                ),
+                                SizedBox(
+                                  height: 8,
+                                ),
+                                lastMessage==null?SizedBox():
+                                Text(formatDate(lastMessage.timestamp))
+                              ],
+                            ),
                       );
                     },
                   );
