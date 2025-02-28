@@ -156,7 +156,7 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
                               child: Container(
                                 padding: EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  color: primary_blue,
+                                  color: primary_purple,
                                   borderRadius: BorderRadius.circular(30),
                                 ),
                                 child: Icon(
@@ -246,7 +246,7 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
                         data_passed["title"] == "edit" ? "Update" : "Continue",
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: primary_blue,
+                        backgroundColor: primary_purple,
                         foregroundColor: Colors.white,
                         padding:
                             EdgeInsets.symmetric(horizontal: 50, vertical: 10),

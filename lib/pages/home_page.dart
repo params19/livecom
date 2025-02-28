@@ -76,6 +76,11 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
           bottom: TabBar(
+            labelColor: primary_purple, // Color of the selected tab text
+            unselectedLabelColor:
+                Colors.black, // Color of the unselected tab text
+            indicatorColor:
+                primary_purple, // Color of the indicator below the selected tab
             tabs: const [
               Tab(text: "Direct Messages"),
               Tab(text: "Groups"),
@@ -157,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                                     currentUserId &&
                                 unreadMsg > 0)
                               CircleAvatar(
-                                backgroundColor: primary_blue,
+                                backgroundColor: primary_purple,
                                 radius: 10,
                                 child: Text(
                                   unreadMsg.toString(),
@@ -285,7 +290,7 @@ class _HomePageState extends State<HomePage> {
                                         return unreadMsgCount == 0
                                             ? const SizedBox()
                                             : CircleAvatar(
-                                                backgroundColor: primary_blue,
+                                                backgroundColor: primary_purple,
                                                 radius: 10,
                                                 child: Text(
                                                   "$unreadMsgCount",

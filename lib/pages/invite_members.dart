@@ -131,7 +131,7 @@ class _InviteMembersState extends State<InviteMembers> {
             child: Container(
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                    color: primary_blue, borderRadius: BorderRadius.circular(10)),
+                    color: primary_purple, borderRadius: BorderRadius.circular(10)),
                 child: Text(
                   "Add ${selectedUserIds.length} member${selectedUserIds.length > 1 ? "s" : ""}",
                   style: TextStyle(color: Colors.white),

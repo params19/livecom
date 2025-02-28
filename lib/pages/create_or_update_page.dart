@@ -3,9 +3,7 @@ import 'dart:io';
 import 'package:appwrite/appwrite.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:livecom/constants/color.dart';
 import 'package:livecom/controllers/appwrite_controllers.dart';
 import 'package:livecom/models/groups_model.dart';
@@ -36,7 +34,6 @@ class _CreateOrUpdateGroupState extends State<CreateOrUpdateGroup> {
     super.initState();
   }
 
-// to open file picker
   void _openFilePicker() async {
     FilePickerResult? result =
         await FilePicker.platform.pickFiles(type: FileType.image);
@@ -45,7 +42,6 @@ class _CreateOrUpdateGroupState extends State<CreateOrUpdateGroup> {
     });
   }
 
-// upload user profile image and save it to bucket and database
   Future uploadProfileImage() async {
     try {
       if (_filePickerResult != null && _filePickerResult!.files.isNotEmpty) {
@@ -54,19 +50,14 @@ class _CreateOrUpdateGroupState extends State<CreateOrUpdateGroup> {
         final inputfile =
             InputFile.fromBytes(bytes: fileByes, filename: file.name);
 
-        // if image already exist for the user profile or not
         if (imageId != null && imageId != "") {
-          // then update the image
           await updateImageOnBucket(image: inputfile, oldImageId: imageId!)
               .then((value) {
             if (value != null) {
               imageId = value;
             }
           });
-        }
-
-        // create new image and upload to bucket
-        else {
+        } else {
           await saveImageToBucket(image: inputfile).then((value) {
             if (value != null) {
               imageId = value;
@@ -102,210 +93,251 @@ class _CreateOrUpdateGroupState extends State<CreateOrUpdateGroup> {
     if (existingData != null) {
       _groupNameController.text = existingData.groupName ?? "";
       _groupDescController.text = existingData.groupDesc ?? "";
-      isPublic = existingData.isPublic ?? true; 
+      isPublic = existingData.isPublic ?? true;
     }
     return Scaffold(
       appBar: AppBar(
         title: Text(existingData != null ? "Update Group" : "Create Group"),
+        centerTitle: true,
+        elevation: 0,
+        titleTextStyle: TextStyle(
+          color: Colors.black,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        backgroundColor: Colors.white,
       ),
       body: Form(
         key: _groupKey,
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "Group Image",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
+                Center(
                   child: Stack(
+                    alignment: Alignment.bottomRight,
                     children: [
                       GestureDetector(
-                        onTap: () => _openFilePicker(),
+                        onTap: _openFilePicker,
                         child: Container(
-                          height: 200,
-                          width: double.infinity,
+                          width: 150,
+                          height: 150,
                           decoration: BoxDecoration(
                             color: secondary_color,
                             shape: BoxShape.circle,
+                            border: Border.all(
+                              color: primary_purple,
+                              width: 2,
+                            ),
                           ),
                           child: _filePickerResult != null
                               ? ClipOval(
-                                  child: Image(
-                                    image: FileImage(File(
-                                        _filePickerResult!.files.first.path!)),
+                                  child: Image.file(
+                                    File(_filePickerResult!.files.first.path!),
                                     fit: BoxFit.cover,
-                                    width: 100,
-                                    height: 100,
+                                    width: 150,
+                                    height: 150,
                                   ),
                                 )
                               : existingData != null &&
                                       existingData.image != null &&
                                       existingData.image != ""
                                   ? ClipOval(
-                                      child: Image(
-                                        image: CachedNetworkImageProvider(
-                                            "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${existingData.image}/view?project=67b7e512000635cad2ad&mode=admin"),
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                            "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${existingData.image}/view?project=67b7e512000635cad2ad&mode=admin",
                                         fit: BoxFit.cover,
-                                        width: 100,
-                                        height: 100,
+                                        width: 150,
+                                        height: 150,
+                                        placeholder: (context, url) =>
+                                            CircularProgressIndicator(),
+                                        errorWidget: (context, url, error) =>
+                                            Icon(Icons.error),
                                       ),
                                     )
-                                  : null,
+                                  : Icon(
+                                      Icons.camera_alt,
+                                      size: 50,
+                                      color: Colors.grey,
+                                    ),
                         ),
                       ),
-                      Positioned(
-                        bottom: 0,
-                        right: 100,
-                        child: GestureDetector(
-                          onTap: () =>
-                              _openFilePicker(), // Ensuring tap works on the edit button
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: primary_blue,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.edit_rounded,
-                              color: Colors.white,
-                            ),
-                          ),
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: primary_purple,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                          size: 20,
                         ),
                       ),
                     ],
                   ),
                 ),
+                SizedBox(height: 20),
+                Text(
+                  "Group Name",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 8),
                 Container(
                   decoration: BoxDecoration(
-                      color: secondary_color,
-                      borderRadius: BorderRadius.circular(12)),
-                  margin: EdgeInsets.all(6),
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    color: secondary_color,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: TextFormField(
-                    validator: (value) {
-                      if (value!.isEmpty) return "Cannot be empty";
-                      return null;
-                    },
                     controller: _groupNameController,
                     decoration: InputDecoration(
-                        border: InputBorder.none, hintText: "Enter group name"),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                      color: secondary_color,
-                      borderRadius: BorderRadius.circular(12)),
-                  margin: EdgeInsets.all(6),
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: TextFormField(
+                      border: InputBorder.none,
+                      hintText: "Enter group name",
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                    ),
                     validator: (value) {
                       if (value!.isEmpty) return "Cannot be empty";
                       return null;
                     },
-                    controller: _groupDescController,
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Enter group description"),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Is Group Public?",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      Spacer(),
-                      Switch(
-                        value: isPublic,
-                        onChanged: (value) {
-                          isPublic = value;
-                          setState(() {});
-                        },
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        isPublic ? "Public" : "Private",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: isPublic ? Colors.green : Colors.red,
-                        ),
-                      ),
-                    ],
+                SizedBox(height: 20),
+                Text(
+                  "Group Description",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
-                )
+                ),
+                SizedBox(height: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    color: secondary_color,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: TextFormField(
+                    controller: _groupDescController,
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Enter group description",
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) return "Cannot be empty";
+                      return null;
+                    },
+                  ),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  children: [
+                    Text(
+                      "Is Group Public?",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    Spacer(),
+                    Switch(
+                      value: isPublic,
+                      onChanged: (value) {
+                        setState(() {
+                          isPublic = value;
+                        });
+                      },
+                      activeColor: primary_purple,
+                    ),
+                    Text(
+                      isPublic ? "Public" : "Private",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: isPublic ? Colors.green : Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_groupKey.currentState!.validate()) {
+                        if (_filePickerResult != null) {
+                          await uploadProfileImage();
+                        }
+                        if (existingData != null) {
+                          await updateExistingGroup(
+                                  groupId: existingData.groupId ?? "",
+                                  groupName: _groupNameController.text,
+                                  groupDesc: _groupDescController.text,
+                                  image: imageId == null || imageId == ""
+                                      ? existingData.image ?? ""
+                                      : imageId ?? "",
+                                  isOpen: isPublic)
+                              .then((value) {
+                            if (value) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content:
+                                          Text("Group Updated Successfully")));
+                              Navigator.pop(context);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text("Cannot Update Group")));
+                            }
+                          });
+                        } else {
+                          await createNewGroup(
+                                  currentUser: userId,
+                                  groupName: _groupNameController.text,
+                                  groupDesc: _groupDescController.text,
+                                  image: imageId ?? "",
+                                  isOpen: isPublic)
+                              .then((value) {
+                            if (value) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content:
+                                          Text("Group Created Successfully")));
+                              Navigator.pop(context);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text("Cannot Create Group")));
+                            }
+                          });
+                        }
+                      }
+                    },
+                    child: Text(
+                      existingData != null ? "Update Group" : "Create Group",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primary_purple,
+                      foregroundColor: Colors.white,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
-          ),
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SizedBox(
-          height: 55,
-          child: ElevatedButton(
-            onPressed: () async {
-              if (_groupKey.currentState!.validate()) {
-                if (_filePickerResult != null) {
-                  await uploadProfileImage();
-                }
-                // updating the group
-                if (existingData != null) {
-                  await updateExistingGroup(
-                          groupId: existingData.groupId ?? "",
-                          groupName: _groupNameController.text,
-                          groupDesc: _groupDescController.text,
-                          image: imageId == null || imageId == ""
-                              ? existingData.image ?? ""
-                              : imageId ?? "",
-                          isOpen: isPublic)
-                      .then((value) {
-                    if (value) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Group Updated Successfully")));
-                      Navigator.pop(context);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Cannot Update Group")));
-                    }
-                  });
-                }
-                // for create a new group
-                else {
-                  await createNewGroup(
-                          currentUser: userId,
-                          groupName: _groupNameController.text,
-                          groupDesc: _groupDescController.text,
-                          image: imageId ?? "",
-                          isOpen: isPublic)
-                      .then((value) {
-                    if (value) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Group Created Successfully")));
-                      Navigator.pop(context);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Cannot Create Group")));
-                    }
-                  });
-                }
-              }
-            },
-            child: Text(existingData != null ? "Update Group" : "Create Group"),
-            style: ElevatedButton.styleFrom(
-                backgroundColor: primary_blue, foregroundColor: Colors.white),
           ),
         ),
       ),

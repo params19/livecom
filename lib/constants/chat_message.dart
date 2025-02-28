@@ -134,7 +134,7 @@ class _ChatMessageState extends State<ChatMessage> {
                                   style: TextStyle(
                                       color: widget.message.sender ==
                                               widget.currentUserId
-                                          ? primary_blue
+                                          ? primary_purple
                                           : Colors.white),
                                 )),
                             if (widget.message.sender != widget.currentUserId)
@@ -213,7 +213,7 @@ class _ChatMessageState extends State<ChatMessage> {
                                     ? Icon(
                                         Icons.check_circle_outlined,
                                         size: 16,
-                                        color: primary_blue,
+                                        color: primary_purple,
                                       )
                                     : Icon(
                                         Icons.check_circle_outlined,
@@ -253,7 +253,7 @@ class _ChatMessageState extends State<ChatMessage> {
                               decoration: BoxDecoration(
                                   color: widget.message.sender ==
                                           widget.currentUserId
-                                      ? primary_blue
+                                      ? primary_purple
                                       : secondary_color,
                                   borderRadius: BorderRadius.only(
                                     bottomLeft: widget.message.sender ==

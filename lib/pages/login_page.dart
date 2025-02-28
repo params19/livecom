@@ -152,7 +152,7 @@ class _PhoneLoginState extends State<LoginPage> {
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           borderSide:
-                                              BorderSide(color: primary_blue),
+                                              BorderSide(color: primary_purple),
                                         ),
                                       ),
                                     ),
@@ -175,7 +175,7 @@ class _PhoneLoginState extends State<LoginPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: primary_blue,
+                    backgroundColor: primary_purple,
                     foregroundColor: Colors.white,
                   ),
                 ),

@@ -16,11 +16,7 @@ import 'package:provider/provider.dart';
 import 'dart:io' as io;
 
 class ChatPage extends StatefulWidget {
-  // final List<MessageModel> messages;
 
-  // // Constructor to receive messages
-  // ChatPage({required this.messages});
-  @override
   State<ChatPage> createState() => _ChatPageState();
 }
 
@@ -210,15 +206,6 @@ class _ChatPageState extends State<ChatPage> {
             ),
             title: Row(
               children: [
-                // CircleAvatar(
-                //   backgroundImage: receiver.profilePic == null ||
-                //           (receiver.profilePic?.isEmpty ?? true)
-                //       ? Image(
-                //           image: AssetImage("assets/user.png"),
-                //         ).image
-                //       : CachedNetworkImageProvider(
-                //           "https://cloud.appwrite.io/v1/storage/buckets/67a3d9aa002c49506451/files/${receiver.profilePic}/view?project=67a316ad003a50945b8b&mode=admin"),
-                // ),
                 CircleAvatar(
                   backgroundImage: receiver.profilePic == null ||
                           (receiver.profilePic?.isEmpty ?? true)

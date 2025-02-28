@@ -122,7 +122,7 @@ class _GroupChatMessageState extends State<GroupChatMessage> {
                                   MediaQuery.of(context).size.width * 0.75),
                           decoration: BoxDecoration(
                               color: widget.msg.senderId == widget.currentUser
-                                  ? primary_blue
+                                  ? primary_purple
                                   : secondary_color,
                               borderRadius: BorderRadius.only(
                                   bottomLeft:
