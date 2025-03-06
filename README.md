@@ -1,8 +1,13 @@
-# Livecom
+# LiveCom
 
 ## Overview
 LiveCom is a real-time messaging application that enables users to register and engage in seamless communication. It supports both individual and group chat functionalities, ensuring dynamic and interactive conversations. With a modern and responsive UI, LiveCom offers an intuitive user experience while integrating essential features such as message status updates, profile management, and notifications.
 
+## Tech Stack
+- **Flutter** - The core framework for building cross-platform mobile applications.  
+- **Appwrite Cloud** - Cloud-based backend services for authentication and data management.  
+- **Firebase Messaging** - Enables real-time push notifications for user interactions.
+  
 ## Features
 - **Chat Messaging**  
   - Send and receive text messages (Create, Read, Update, Delete)  
@@ -20,6 +25,24 @@ LiveCom is a real-time messaging application that enables users to register and 
   - Invite users to join groups  
   - Join public groups  
   - Track unread messages in group chats  
+
+## Installation & Setup
+1. **Clone the repository**  
+   ```bash
+   git clone https://github.com/your-repo/livecom.git
+   cd livecom
+   ```
+2. **Install dependencies**  
+   ```bash
+   flutter pub get
+   ```
+3. **Set up environment variables**  
+   - Create a `.env` file in the root directory.
+   - Add necessary API keys and configurations.
+4. **Run the app**  
+   ```bash
+   flutter run
+   ```
 
 ## Usage
 - Users can register using phone authentication.  
@@ -43,11 +66,6 @@ LiveCom is a real-time messaging application that enables users to register and 
 - **HTTP** - Handles network requests and API interactions.  
 - **Flutter Dotenv** - Manages environment variables securely.  
 
-## Tech Stack
-- **Flutter** - The core framework for building cross-platform mobile applications.  
-- **Appwrite Cloud** - Cloud-based backend services for authentication and data management.  
-- **Firebase Messaging** - Enables real-time push notifications for user interactions.  
-
 ## Topics Covered
 - **Provider** - Manages application state efficiently with reactive updates.  
 - **Shared Preferences** - Stores persistent key-value data locally on devices.  
@@ -60,4 +78,14 @@ LiveCom is a real-time messaging application that enables users to register and 
 
 ## Screenshots
 _(Add project screenshots here)_
+
+## Contribution
+Contributions are welcome! To contribute:
+1. Fork the repository.
+2. Create a new branch: `git checkout -b feature-branch-name`
+3. Commit your changes: `git commit -m "Add new feature"`
+4. Push the branch: `git push origin feature-branch-name`
+5. Submit a pull request.
+
+
 
