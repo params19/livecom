@@ -304,6 +304,7 @@ class _ChatPageState extends State<ChatPage> {
                                                                 message:
                                                                     editmessageController
                                                                         .text,
+                                                                 isGroupInvite: false,
                                                               );
                                                               Navigator.pop(
                                                                   context);

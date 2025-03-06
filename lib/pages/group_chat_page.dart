@@ -88,7 +88,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
             sendMultipleNotificationtoOtherUser(
                 notificationTitle:
                     "Received an image in ${groupData.groupName}",
-                notificationBody: '${currentUserName}: Sent and image',
+                notificationBody: '${currentUserName}: Sent an image',
                 deviceToken: userTokens);
           }
         });

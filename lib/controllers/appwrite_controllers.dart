@@ -324,13 +324,17 @@ Future createNewChat(
 Future editChat({
   required String chatId,
   required String message,
+  required bool isGroupInvite,
 }) async {
   try {
     await database.updateDocument(
         databaseId: db,
         collectionId: chat_collection,
         documentId: chatId,
-        data: {"message": message});
+
+        data: {"message": message,
+        "isGroupInvite": isGroupInvite
+        });
     print("Message updated");
   } catch (e) {
     print("Error on editing message :$e");

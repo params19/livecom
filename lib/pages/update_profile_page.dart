@@ -29,7 +29,6 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
 
   @override
   void initState() {
-    // try to load the data from local database
     Future.delayed(Duration.zero, () {
       userId = Provider.of<UserDataProvider>(context, listen: false).getUserId;
       Provider.of<UserDataProvider>(context, listen: false)
@@ -37,11 +36,9 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
       imageId =
           Provider.of<UserDataProvider>(context, listen: false).getUserProfile;
     });
-
     super.initState();
   }
 
-  // FilePickerResult? _filePickerResult;
   void _openFilePicker() async {
     FilePickerResult? result =
         await FilePicker.platform.pickFiles(type: FileType.image);
@@ -50,7 +47,6 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
     });
   }
 
-  // upload user profile image and save it to bucket and database
   Future uploadProfileImage() async {
     try {
       if (_filePickerResult != null && _filePickerResult!.files.isNotEmpty) {
@@ -59,19 +55,14 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
         final inputfile =
             InputFile.fromBytes(bytes: fileByes, filename: file.name);
 
-        // if image already exist for the user profile or not
         if (imageId != null && imageId != "") {
-          // then update the image
           await updateImageOnBucket(image: inputfile, oldImageId: imageId!)
               .then((value) {
             if (value != null) {
               imageId = value;
             }
           });
-        }
-
-        // create new image and upload to bucket
-        else {
+        } else {
           await saveImageToBucket(image: inputfile).then((value) {
             if (value != null) {
               imageId = value;
@@ -99,9 +90,8 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
         return Scaffold(
           appBar: AppBar(
             leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.black), // Back button
+              icon: Icon(Icons.arrow_back, color: Colors.black),
               onPressed: () {
-                // Navigates back
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => ProfilePage()),
@@ -109,153 +99,151 @@ class _UpadteProfilePageState extends State<UpadteProfilePage> {
               },
             ),
             title: Text(
-              data_passed["title"] == "edit" ? "Update" : "Add Details",
-              textAlign: TextAlign.left,
+              data_passed["title"] == "edit" ? "Update Profile" : "Add Details",
               style: TextStyle(
                 color: Colors.black,
-                fontWeight: FontWeight.w500,
-                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
               ),
             ),
+            centerTitle: true,
+            elevation: 0,
+            backgroundColor: Colors.transparent,
           ),
           body: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 30,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 20),
+                  Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      GestureDetector(
+                        onTap: _openFilePicker,
+                        child: CircleAvatar(
+                          radius: 80,
+                          backgroundColor: secondary_color,
+                          backgroundImage: _filePickerResult != null
+                              ? Image.file(File(
+                                      _filePickerResult!.files.first.path!))
+                                  .image
+                              : value.getUserProfile != "" &&
+                                      value.getUserProfile != null
+                                  ? CachedNetworkImageProvider(
+                                      "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${value.getUserProfile}/view?project=67b7e512000635cad2ad&mode=admin")
+                                  : null,
+                          child: value.getUserProfile == "" ||
+                                  value.getUserProfile == null
+                              ? Icon(
+                                  Icons.camera_alt,
+                                  size: 50,
+                                  color: Colors.grey,
+                                )
+                              : null,
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: primary_purple,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 30),
+                  Text(
+                    "Name",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        _openFilePicker();
+                  ),
+                  SizedBox(height: 8),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    decoration: BoxDecoration(
+                      color: secondary_color,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: TextFormField(
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Enter your name",
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) return "Cannot be empty";
+                        return null;
                       },
-                      child: Stack(
-                        children: [
-                          CircleAvatar(
-                            radius: 120,
-                            backgroundImage: _filePickerResult != null
-                                ? Image(
-                                        image: FileImage(File(_filePickerResult!
-                                            .files.first.path!)))
-                                    .image
-                                // : Image(image: AssetImage("assets/user.png"))
-                                //     .image,
-                                : value.getUserProfile != "" &&
-                                        value.getUserProfile != null
-                                    ? CachedNetworkImageProvider(
-                                        "https://cloud.appwrite.io/v1/storage/buckets/67b7f7a000142a335f4e/files/${value.getUserProfile}/view?project=67b7e512000635cad2ad&mode=admin")
-                                    : null,
-                            backgroundColor: Colors.grey,
-                          ),
-                          Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Container(
-                                padding: EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: primary_purple,
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                child: Icon(
-                                  Icons.edit_rounded,
-                                  color: Colors.white,
-                                ),
-                              ))
-                        ],
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    "Phone Number",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    decoration: BoxDecoration(
+                      color: secondary_color,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: TextFormField(
+                      controller: _phoneController,
+                      enabled: false,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Phone Number",
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16),
                       ),
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Center(
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.85,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: secondary_color,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          margin: EdgeInsets.all(6),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: Form(
-                            key: _nameKey,
-                            child: TextFormField(
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return "Cannot be empty";
-                                } else {
-                                  return null;
-                                }
-                              },
-                              controller: _nameController,
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "Enter your Name"),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Center(
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.85,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: secondary_color,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          margin: EdgeInsets.all(6),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: TextFormField(
-                            controller: _phoneController,
-                            enabled: false,
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Phone Number"),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        print("Current image id is $imageId");
-                        if (_nameKey.currentState!.validate()) {
-                          // upload the image if file is picked
-                          if (_filePickerResult != null) {
-                            await uploadProfileImage();
-                          }
-
-                          // save the data to database user collection
-                          await updateUserDetails(imageId ?? "",
-                              userId: userId!, name: _nameController.text);
-
-                          // // navigate the user to the home route
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, "/home", (route) => false);
+                  ),
+                  SizedBox(height: 30),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (_nameKey.currentState!.validate()) {
+                        if (_filePickerResult != null) {
+                          await uploadProfileImage();
                         }
-                      },
-                      child: Text(
-                        data_passed["title"] == "edit" ? "Update" : "Continue",
+                        await updateUserDetails(imageId ?? "",
+                            userId: userId!, name: _nameController.text);
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, "/home", (route) => false);
+                      }
+                    },
+                    child: Text(
+                      data_passed["title"] == "edit"
+                          ? "Update Profile"
+                          : "Continue",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primary_purple,
+                      foregroundColor: Colors.white,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primary_purple,
-                        foregroundColor: Colors.white,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                    )
-                  ]),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );

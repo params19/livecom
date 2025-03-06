@@ -31,7 +31,8 @@ class _PhoneLoginState extends State<LoginPage> {
           Provider.of<UserDataProvider>(context, listen: false)
               .setUserPhone(countryCode + _phoneController.text);
           Navigator.pushNamedAndRemoveUntil(
-              context, "/update", (route) => false, arguments: {"title" : "add"});
+              context, "/update", (route) => false,
+              arguments: {"title": "add"});
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Error in login with OTP")),
@@ -87,9 +88,26 @@ class _PhoneLoginState extends State<LoginPage> {
                       alignLeft: false,
                     ),
                     labelText: "Phone number",
+                    labelStyle:
+                        TextStyle(color: Colors.black, fontWeight: FontWeight.w600), // Change label color
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                          color: primary_purple), // Change default border color
                     ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                          color: Colors.grey), // Border color when not focused
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                          color: primary_purple,
+                          width: 2), // Border color when focused
+                    ),
+                    floatingLabelStyle: TextStyle(
+                        color: Colors.black), // Change label color when focused
                   ),
                 ),
               ),
