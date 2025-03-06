@@ -77,7 +77,24 @@ LiveCom is a real-time messaging application that enables users to register and 
 - **Appwrite Storage Bucket** - Stores and retrieves user-uploaded files efficiently.  
 
 ## Screenshots
-_(Add project screenshots here)_
+# Auth
+<img width="298" alt="Screenshot 2025-03-06 at 6 12 50 PM" src="https://github.com/user-attachments/assets/dd0020f8-df61-4a3f-a902-d4dfdcc65915" />
+<img width="299" alt="Screenshot 2025-03-06 at 5 43 22 PM" src="https://github.com/user-attachments/assets/8d43edd8-dbdc-4d6e-a205-f6fb7fc98cda" />
+# Homepage and Chats
+<img width="299" alt="Screenshot 2025-03-06 at 5 52 56 PM" src="https://github.com/user-attachments/assets/33c64db4-5dfe-4ead-a64d-64dd31cd93b1" />
+<img width="301" alt="Screenshot 2025-03-06 at 5 53 59 PM" src="https://github.com/user-attachments/assets/cb30eafc-3204-4a7a-980b-b2887d390641" />
+<img width="295" alt="Screenshot 2025-03-06 at 5 32 43 PM" src="https://github.com/user-attachments/assets/db8bf2a3-3e2b-4015-a3df-748aa398b4e1" />
+<img width="298" alt="Screenshot 2025-03-06 at 5 33 04 PM" src="https://github.com/user-attachments/assets/fff1a979-2973-457e-9758-864e07f85a22" />
+# Groups
+<img width="298" alt="Screenshot 2025-03-06 at 6 07 01 PM" src="https://github.com/user-attachments/assets/0903b5b3-3df9-48ed-8cc3-5fc599ba1e2e" />
+<img width="300" alt="Screenshot 2025-03-06 at 5 54 29 PM" src="https://github.com/user-attachments/assets/979168f5-db87-4ee7-b9a2-6b059e3acc21" />
+<img width="301" alt="Screenshot 2025-03-06 at 5 54 55 PM" src="https://github.com/user-attachments/assets/2fecf4b8-8e4d-4b53-b2c1-a3ccde7deb9d" />
+<img width="297" alt="Screenshot 2025-03-06 at 6 15 13 PM" src="https://github.com/user-attachments/assets/9bdc7e88-7d74-429d-ae70-30081fbbd3b3" />
+# Push Notifications 
+<img width="298" alt="Screenshot 2025-03-06 at 6 40 34 PM" src="https://github.com/user-attachments/assets/0d347158-196b-4c54-9d21-e03e82af2f4b" />
+<img width="298" alt="Screenshot 2025-03-06 at 7 22 17 PM" src="https://github.com/user-attachments/assets/1aa6f197-cee8-4f1d-b25d-6cd032961e5a" />
+
+
 
 ## Contribution
 Contributions are welcome! To contribute:
