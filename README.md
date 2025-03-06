@@ -1,4 +1,4 @@
-# LiveCom
+# Livecom
 
 ## Overview
 LiveCom is a real-time messaging application that enables users to register and engage in seamless communication. It supports both individual and group chat functionalities, ensuring dynamic and interactive conversations. With a modern and responsive UI, LiveCom offers an intuitive user experience while integrating essential features such as message status updates, profile management, and notifications.
